@@ -6,6 +6,7 @@ Feature: Hotel Feature Travel PHP
     When I login with <username> and <password>
     Then I open the "Hotels" menu 
     Then I search city "Dubai" 
+    Then I click option "Armani Hotel Dubai"
 
     Examples:
       | username | password             | message                        |
