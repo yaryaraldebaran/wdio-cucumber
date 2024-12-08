@@ -125,6 +125,21 @@ exports.config = {
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: [['allure', {outputDir: 'allure-results'}]],
 
+    beforeTest: function (test, context) {
+        try {
+            console.log('Running beforeTest hook...');
+            // Your setup logic
+        } catch (err) {
+            console.error('Error in beforeTest hook:', err);
+        }
+    },
+    afterTest: function (test, context, { error, result, duration, passed }) {
+        if (error) {
+            console.error('Error in afterTest hook:', error);
+        }
+    },
+    
+
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
         // <string[]> (file/dir) require files before executing features

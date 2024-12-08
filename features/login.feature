@@ -1,9 +1,12 @@
-Feature: The Internet Guinea Pig Website
+@LoginTest
+Feature: Login PHP Travels
 
-  Scenario Outline: As a user, I can log into the secure area
 
-    Given I am on the login page
-    When I login with <username> and <password>
+  @PositiveLogin
+  Scenario Outline: User can log into the secure area
+    Given User is on the "login" page
+    When User login with <username> and <password>
+    Then User is on the dashboard page
 
     Examples:
       | username | password             | message                        |

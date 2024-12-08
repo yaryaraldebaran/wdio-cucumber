@@ -10,12 +10,13 @@ class HotelsPage extends Page{
      * @returns {import('webdriverio').Element}
     */
     get searchSelector() {
-        return $(`//span[@id='select2-hotels_city-container']`)
+        return $(`//span[@aria-labelledby='select2-hotels_city-container']`)
     } 
     /**
      * @returns {import('webdriverio').Element}
     */
     get searchField()  {return  $(`//input[@type='search']`)}
+    
     /**
      * @returns {import('webdriverio').Element}
     */
@@ -37,6 +38,26 @@ class HotelsPage extends Page{
     */
     get txtHotelNameinDetail(){
         return $(`//strong/parent::div[@class='h4 fw-bold mb-0']`)
+    }
+
+    /**
+    * @returns {import('webdriverio').Element}
+    */
+    async txtHotelLocation(text){
+        return $$(`//p/small[contains(., '${text}')]`)
+    }
+    /**
+    * @returns {import('webdriverio').Element}
+    */
+    get btnSelectRoom(){
+        return $("//a[normalize-space(text())='Select Room']")
+    }
+
+    /**
+    * @returns {import('webdriverio').Element}
+    */
+    get btnBookNow(){
+        return $("//button[normalize-space()='Book Now']")
     }
 
 }
