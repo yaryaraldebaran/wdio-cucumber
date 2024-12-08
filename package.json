@@ -4,7 +4,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "wdio": "wdio run ./wdio.conf.js"
+    "wdio": "wdio run ./wdio.conf.js",
+    "clean-report": "rm -rf allure-report allure-results",
+    "allure:generate": "allure generate allure-results --clean",
+    "allure:open": "allure open allure-report"
   },
   "keywords": [],
   "author": "",

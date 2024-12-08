@@ -30,6 +30,9 @@ class HotelsPage extends Page{
     get buttonSearch(){
         return $(`//button[@type='submit']`)
     }
+    /**
+    * @returns {import('webdriverio').Element}
+    */
     async btnViewByHotelName(text) {
         return await $(`//strong[text()='${text}']/ancestor::div[@class='card rounded-2']/descendant::a[normalize-space(text())='View More']`);
     }    
