@@ -5,7 +5,7 @@ const hotelsPage = require('../pageobjects/hotels.page')
 
 const LoginPage = require('../pageobjects/login.page');
 
-
+const utils = require('../../utils/utils')
 
 
 const pages = {
@@ -21,13 +21,14 @@ const searchHotel = async (cityName)=>{
 
     // const searchField = hotelsPage.searchField
     await hotelsPage.searchField.setValue(cityName)
-
+    await utils.customTakeScreenshot()
     await browser.pause(2000)
 
     // const firstResult = hotelsPage.firstResult
     await hotelsPage.firstResult.click()
     await hotelsPage.buttonSearch.click()
     await browser.pause(10000)
+    await utils.customTakeScreenshot()
 }
 const selectHotel = async(hotelName)=>{
     // const txtGetApp = await $("//strong[normalize-space()='Get The App!']")
@@ -40,13 +41,40 @@ const selectHotel = async(hotelName)=>{
     await btnView.click();
 
     var hotelNameInDetail = await hotelsPage.txtHotelNameinDetail.getText()
-    expect(hotelNameInDetail).toEqual(hotelName)
+    await expect(hotelNameInDetail).toEqual(hotelName)
+    await utils.customTakeScreenshot()
 }
 const verifyCityInSearchLocation = async (cityName)=>{
     const cityNameOnCard = await hotelsPage.txtHotelLocation(cityName)
     for (const element of cityNameOnCard) {
         expect(await element.isDisplayed()).toBe(true);
     }
+    await utils.customTakeScreenshot()
+}
+
+const selectDropdown = async (dropdown, option)=>{
+    const dropdownElement = await dropdown
+    await dropdownElement.click()
+    const optionElement = await option 
+    await optionElement.click()
+    
+}
+const fillPersonalInformation = async()=>{
+    await (await hotelsPage.inputPersonalInfoByLabelDynamic('First Name')).setValue('John');
+    await (await hotelsPage.inputPersonalInfoByLabelDynamic('Last Name')).setValue('Doe');
+    await (await hotelsPage.inputPersonalInfoByLabelDynamic('Email')).setValue('john@doe.com');
+    await (await hotelsPage.inputPersonalInfoByLabelDynamic('Address')).setValue('John Doe Address');
+    await (await hotelsPage.inputPersonalInfoByLabelDynamic('Phone')).setValue('088888888');
+}
+const fillTravellersInformation = async()=>{
+    selectDropdown(
+        await hotelsPage.dropdownTravellerTitle,
+        await hotelsPage.optionByTextOnDetail("Mr")
+    )
+    await utils.customTakeScreenshot()
+    await (await hotelsPage.inputTravellerFirstName.setValue("John"))
+    await (await hotelsPage.inputTravellerLastName.setValue("Doe"))
+    await utils.customTakeScreenshot()
 }
 
 
@@ -82,6 +110,10 @@ When(/^User select card hotel "(.*)"$/,async (hotelName)=>{
 When(/^User create hotel booking$/,async ()=>{
     const btnSelectRoom = await hotelsPage.btnSelectRoom
     await btnSelectRoom.click()
+    await selectDropdown(
+        await hotelsPage.dropdownOnDetail,
+        await hotelsPage.optionByTextOnDetail("1 -")
+    )
     const btnBookNow = hotelsPage.btnBookNow
     //add select 
     await btnBookNow.scrollIntoView()
@@ -89,7 +121,7 @@ When(/^User create hotel booking$/,async ()=>{
 })
 
 When(/^User continue finishing transaction$/,async ()=>{
-    await console.log("write code here for finishing transaction")
+    await fillTravellersInformation()
 })
 
 When(/^User have the transaction id$/,async ()=>{

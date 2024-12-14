@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  wdio:
+    build: .
+    container_name: wdio-cucumber
+    volumes:
+      - .:/app
+    working_dir: /app

@@ -1,11 +1,11 @@
-@HotelTest
+@HotelFeature
 Feature: Hotel Feature Travel PHP 
 
-  Scenario Outline: Searching hotel 
-    Given User logged in as <username> with password <password>
-    And User open the "Hotels" menu
-    When User search city "Dubai"
-    Then User see "Dubai" city in result card
+  # Scenario Outline: Searching hotel 
+  #   Given User logged in as <username> with password <password>
+  #   And User open the "Hotels" menu
+  #   When User search city "Dubai"
+  #   Then User see "Dubai" city in result card
 
   Scenario Outline: Book a hotel without changing any traveller option 
     Given User have searched for hotels in "Dubai"

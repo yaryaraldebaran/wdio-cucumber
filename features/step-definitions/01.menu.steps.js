@@ -2,7 +2,6 @@ const { Given, When, Then } = require('@wdio/cucumber-framework');
 const { expect, $, browser } = require('@wdio/globals')
 
 const LoginPage = require('../pageobjects/login.page');
-const SecurePage = require('../pageobjects/secure.page');
 
 const pages = {
     login: LoginPage

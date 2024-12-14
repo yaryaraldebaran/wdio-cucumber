@@ -55,12 +55,44 @@ class HotelsPage extends Page{
     get btnSelectRoom(){
         return $("//a[normalize-space(text())='Select Room']")
     }
+        /**
+    * @returns {import('webdriverio').Element}
+    */
+   get dropdownOnDetail(){
+        return $("//select[@name='room_quantity']")
+   }
+   
+   async optionByTextOnDetail(text){
+    return $(`//option[starts-with(text(),'${text}')]`)
+   }
 
     /**
     * @returns {import('webdriverio').Element}
     */
     get btnBookNow(){
         return $("//button[normalize-space()='Book Now']")
+    }
+    async inputPersonalInfoByLabelDynamic(text){
+        return $(`//input[following-sibling::label[normalize-space(text())='${text}'] and ancestor::div/div/h3[normalize-space(text())='Personal Information']]`)
+    }
+
+    get inputTravellerFirstName(){
+        return $(`//div[./div/h3[normalize-space(text())='Travellers Information']]/descendant::input[@placeholder='First Name'][1]`)
+    }
+    get inputTravellerLastName(){
+        return $(`//div[./div/h3[normalize-space(text())='Travellers Information']]/descendant::input[@placeholder='Last Name'][1]`)
+    }
+    get dropdownTravellerTitle(){
+        return $(`(//select[./following-sibling::label[text()='Title']])[1]`)
+    }
+    get checkboxTermsCondition(){
+        return $(`//input[@id='agreechb']`)
+    }
+    get btnBookingConfirm(){
+        return $(`//button[normalize-space(text())='Booking Confirm']`)
+    }
+    async txtHeaderStatusByField(text){
+        return $(`//strong[text()='${text}']/following-sibling::span`)
     }
 
 }

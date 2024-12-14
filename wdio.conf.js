@@ -1,3 +1,4 @@
+const { addAttachment } = require('@wdio/allure-reporter');
 exports.config = {
   //
   // ====================
@@ -21,6 +22,7 @@ exports.config = {
   // of the config file unless it's absolute.
   //
   specs: ["./features/**/*.feature"],
+
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'
@@ -278,8 +280,17 @@ exports.config = {
    * @param {number}                 result.duration  duration of scenario in milliseconds
    * @param {object}                 context          Cucumber World object
    */
-  // afterScenario: function (world, result, context) {
-  // },
+  //after scenario harus ditempatkan disini
+  afterScenario: async function (world, result, context) {
+    if (!result.passed) {
+      console.log("Scenario failed. Browser will remain open for debugging.");
+      await browser.debug();
+      // Ambil screenshot jika tes gagal
+      const screenshot = await browser.takeScreenshot();
+      // Menyimpan screenshot ke dalam laporan Allure
+      addAttachment('Failed Test Screenshot', Buffer.from(screenshot, 'base64'), 'image/png');
+    }
+  },
   /**
    *
    * Runs after a Cucumber Feature.
