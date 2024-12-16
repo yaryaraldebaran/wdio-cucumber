@@ -1,8 +1,8 @@
-version: '3.8'
 services:
   wdio:
-    build: .
+    image: wdio-cucumber  # Use the pre-built image
     container_name: wdio-cucumber
     volumes:
       - .:/app
+      - ./reports:/app/allure-results # Mount reports directory
     working_dir: /app
