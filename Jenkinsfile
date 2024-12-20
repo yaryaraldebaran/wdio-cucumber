@@ -1,7 +1,6 @@
 pipeline {
     agent any
     parameters {
-        // Menambahkan lebih banyak pilihan
         choice(
             name: 'FEATURE_TAG',
             choices: [
@@ -14,15 +13,14 @@ pipeline {
         )
     }
     environment {
-        GIT_CREDENTIALS = credentials('56886b6a-2044-4bea-8434-b13331da1fd9')  // Nama ID kredensial yang telah Anda simpan di Jenkins
+        GIT_CREDENTIALS = credentials('56886b6a-2044-4bea-8434-b13331da1fd9')
         DOCKER_IMAGE = 'wdio-cucumber:latest'
         ALLURE_RESULTS = 'allure-results'
-        PROJECT_DIR = 'C:\\Users\\Ahyar\\Documents\\website automation proj\\webdriverio-cucumber-2'  // Gunakan \\ sebagai pemisah
+        PROJECT_DIR = 'C:\\Users\\Ahyar\\Documents\\website automation proj\\webdriverio-cucumber-2' // Jalur dengan spasi
     }
     stages {
         stage('Checkout') {
             steps {
-                // Checkout kode dari GitHub menggunakan kredensial yang aman
                 git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
             }
         }
@@ -30,7 +28,6 @@ pipeline {
             steps {
                 echo 'Running tests with Docker Compose...'
                 script {
-                    // Mendefinisikan pemetaan tag ke deskripsi fitur di dalam script block
                     def FEATURE_DESCRIPTION_MAP = [
                         '@HotelFeature'  : 'Fitur Hotel',
                         '@FlightFeature' : 'Fitur Tiket Pesawat',
@@ -38,17 +35,14 @@ pipeline {
                         '@SchoolFeature' : 'Fitur Sekolah'
                     ]
                     
-                    // Mendapatkan tag yang dipilih dari parameter
                     def cucumberTag = params.FEATURE_TAG
-
-                    // Mendapatkan deskripsi fitur dari map
                     def featureDescription = FEATURE_DESCRIPTION_MAP[cucumberTag]
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
 
-                    // Menjalankan Docker Compose dengan tag yang dipilih
+                    // Menggunakan tanda kutip di sekitar jalur direktori untuk Windows
                     bat """
-                        cd ${PROJECT_DIR} && 
+                        cd "${PROJECT_DIR}" && 
                         docker-compose run -e FEATURE_TAG='${cucumberTag}' wdio
                     """
                 }
@@ -71,7 +65,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up Docker Compose resources...'
-            bat 'docker-compose down'  // Windows
+            bat 'docker-compose down'
         }
         success {
             echo 'Tests completed successfully!'
