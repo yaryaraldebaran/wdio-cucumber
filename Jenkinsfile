@@ -18,13 +18,6 @@ pipeline {
         DOCKER_IMAGE = 'wdio-cucumber:latest'
         ALLURE_RESULTS = 'allure-results'
         PROJECT_DIR = 'C:\\Users\\Ahyar\\Documents\\website automation proj\\webdriverio-cucumber-2'  // Gunakan \\ sebagai pemisah
-        // Pemetaan tag ke deskripsi fitur
-        FEATURE_DESCRIPTION_MAP = [
-            '@HotelFeature'  : 'Fitur Hotel',
-            '@FlightFeature' : 'Fitur Tiket Pesawat',
-            '@BusFeature'    : 'Fitur Bus',
-            '@SchoolFeature' : 'Fitur Sekolah'
-        ]
     }
     stages {
         stage('Checkout') {
@@ -37,6 +30,14 @@ pipeline {
             steps {
                 echo 'Running tests with Docker Compose...'
                 script {
+                    // Mendefinisikan pemetaan tag ke deskripsi fitur di dalam script block
+                    def FEATURE_DESCRIPTION_MAP = [
+                        '@HotelFeature'  : 'Fitur Hotel',
+                        '@FlightFeature' : 'Fitur Tiket Pesawat',
+                        '@BusFeature'    : 'Fitur Bus',
+                        '@SchoolFeature' : 'Fitur Sekolah'
+                    ]
+                    
                     // Mendapatkan tag yang dipilih dari parameter
                     def cucumberTag = params.FEATURE_TAG
 
