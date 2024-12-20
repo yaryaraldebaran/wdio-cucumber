@@ -16,7 +16,7 @@ pipeline {
         GIT_CREDENTIALS = credentials('56886b6a-2044-4bea-8434-b13331da1fd9')
         DOCKER_IMAGE = 'wdio-cucumber:latest'
         ALLURE_RESULTS = 'allure-results'
-        PROJECT_DIR = 'C:\\Users\\Ahyar\\Documents\\website automation proj\\webdriverio-cucumber-2' // Jalur dengan spasi
+        PROJECT_DIR = 'C:/Users/Ahyar/Documents/website automation proj/webdriverio-cucumber-2'
     }
     stages {
         stage('Checkout') {
