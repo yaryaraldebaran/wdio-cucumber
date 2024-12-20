@@ -42,8 +42,7 @@ pipeline {
 
                     // Menggunakan tanda kutip di sekitar jalur direktori untuk Windows
                     bat """
-                        cd "${PROJECT_DIR}" && 
-                        docker-compose run -e FEATURE_TAG='${cucumberTag}' wdio
+                        cd "${PROJECT_DIR}" && docker-compose run -e FEATURE_TAG='${cucumberTag}' wdio
                     """
                 }
             }
