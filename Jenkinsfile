@@ -12,7 +12,7 @@ pipeline {
         )
     }
     environment {
-        GIT_CREDENTIALS = credentials('github-token')  // Nama ID kredensial yang telah Anda simpan di Jenkins
+        GIT_CREDENTIALS = credentials('56886b6a-2044-4bea-8434-b13331da1fd9')  // Nama ID kredensial yang telah Anda simpan di Jenkins
         DOCKER_IMAGE = 'wdio-cucumber:latest'
         ALLURE_RESULTS = 'allure-results'
         PROJECT_DIR = 'C:/Users/Ahyar/Documents/website automation proj/webdriverio-cucumber-2'
@@ -21,7 +21,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout kode dari GitHub menggunakan kredensial yang aman
-                git url: 'https://github.com/username/my-project.git', credentialsId: 'github-token', branch: 'main'
+                git url: 'https://github.com/username/my-project.git', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
             }
         }
         stage('Run Tests') {
