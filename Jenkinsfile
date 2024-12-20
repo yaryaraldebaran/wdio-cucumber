@@ -1,10 +1,15 @@
 pipeline {
     agent any
     parameters {
-
+        // Menambahkan lebih banyak pilihan
         choice(
             name: 'FEATURE_TAG',
-            choices: ['@HotelFeature', '@FlightFeature'],
+            choices: [
+                '@HotelFeature', 
+                '@FlightFeature', 
+                '@BusFeature', 
+                '@SchoolFeature'
+            ],
             description: 'Pilih fitur yang ingin dijalankan untuk testing'
         )
     }
@@ -12,12 +17,19 @@ pipeline {
         GIT_CREDENTIALS = credentials('56886b6a-2044-4bea-8434-b13331da1fd9')  // Nama ID kredensial yang telah Anda simpan di Jenkins
         DOCKER_IMAGE = 'wdio-cucumber:latest'
         ALLURE_RESULTS = 'allure-results'
-        PROJECT_DIR = 'C:/Users/Ahyar/Documents/website automation proj/webdriverio-cucumber-2'
+        PROJECT_DIR = 'C:\\Users\\Ahyar\\Documents\\website automation proj\\webdriverio-cucumber-2'  // Gunakan \\ sebagai pemisah
+        // Pemetaan tag ke deskripsi fitur
+        FEATURE_DESCRIPTION_MAP = [
+            '@HotelFeature'  : 'Fitur Hotel',
+            '@FlightFeature' : 'Fitur Tiket Pesawat',
+            '@BusFeature'    : 'Fitur Bus',
+            '@SchoolFeature' : 'Fitur Sekolah'
+        ]
     }
     stages {
         stage('Checkout') {
             steps {
-                
+                // Checkout kode dari GitHub menggunakan kredensial yang aman
                 git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
             }
         }
@@ -28,8 +40,9 @@ pipeline {
                     // Mendapatkan tag yang dipilih dari parameter
                     def cucumberTag = params.FEATURE_TAG
 
-                    // Menentukan label deskriptif yang ditampilkan di UI Jenkins
-                    def featureDescription = cucumberTag == '@HotelFeature' ? 'Fitur Hotel' : 'Fitur Tiket Pesawat'
+                    // Mendapatkan deskripsi fitur dari map
+                    def featureDescription = FEATURE_DESCRIPTION_MAP[cucumberTag]
+
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
 
                     // Menjalankan Docker Compose dengan tag yang dipilih
