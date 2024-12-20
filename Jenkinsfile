@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        // Pilihan yang lebih deskriptif
+
         choice(
             name: 'FEATURE_TAG',
             choices: ['@HotelFeature', '@FlightFeature'],
@@ -17,8 +17,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout kode dari GitHub menggunakan kredensial yang aman
-                git url: 'https://github.com/username/my-project.git', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
+                
+                git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
             }
         }
         stage('Run Tests') {
