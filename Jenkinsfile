@@ -1,14 +1,11 @@
 pipeline {
     agent any
     parameters {
+        // Pilihan yang lebih deskriptif
         choice(
             name: 'FEATURE_TAG',
             choices: ['@HotelFeature', '@FlightFeature'],
-            description: 'Pilih fitur yang ingin dijalankan untuk testing',
-            mapping: [
-                '@HotelFeature': 'Fitur Hotel',  // Menampilkan "Fitur Hotel" tetapi menyimpan nilai "@HotelFeature"
-                '@FlightFeature': 'Fitur Tiket Pesawat'  // Menampilkan "Fitur Tiket Pesawat" tetapi menyimpan nilai "@FlightFeature"
-            ]
+            description: 'Pilih fitur yang ingin dijalankan untuk testing'
         )
     }
     environment {
@@ -30,7 +27,10 @@ pipeline {
                 script {
                     // Mendapatkan tag yang dipilih dari parameter
                     def cucumberTag = params.FEATURE_TAG
-                    echo "Running tests with tag: ${cucumberTag}"
+
+                    // Menentukan label deskriptif yang ditampilkan di UI Jenkins
+                    def featureDescription = cucumberTag == '@HotelFeature' ? 'Fitur Hotel' : 'Fitur Tiket Pesawat'
+                    echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
 
                     // Menjalankan Docker Compose dengan tag yang dipilih
                     bat """
