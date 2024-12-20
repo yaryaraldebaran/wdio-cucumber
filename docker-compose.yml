@@ -1,8 +1,11 @@
 services:
   wdio:
-    image: wdio-cucumber  # Use the pre-built image
-    container_name: wdio-cucumber
+    image: wdio-cucumber:latest
     volumes:
       - .:/app
-      - ./reports:/app/allure-results # Mount reports directory
+      - ./allure-results:/app/allure-results
+    environment:
+      - DISPLAY=:99
+      - TAG=${FEATURE_TAG}
+    command: "sh -c 'Xvfb :99 -screen 0 1280x1024x24 & npx wdio run wdio.conf.js --cucumberOpts.tagExpression ${FEATURE_TAG}'"
     working_dir: /app
