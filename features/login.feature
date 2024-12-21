@@ -1,8 +1,6 @@
 @LoginTest
+# Feature to test login
 Feature: Login PHP Travels
-
-
-  @PositiveLogin
   Scenario Outline: User can log into the secure area
     Given User is on the "login" page
     When User login with <username> and <password>
