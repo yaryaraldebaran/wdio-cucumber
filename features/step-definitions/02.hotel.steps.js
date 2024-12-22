@@ -79,6 +79,7 @@ const fillTravellersInformation = async()=>{
 
 
 
+
 Then(/^User search city "(.*)"$/, async (cityName) => {
     await searchHotel(cityName)
 });

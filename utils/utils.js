@@ -16,12 +16,14 @@ class Utils extends Page {
   // Fungsi untuk mengambil screenshot manual
   async customTakeScreenshot() {
     const screenshot = await browser.takeScreenshot();
-    addAttachment(
-      'Screenshot_' + new Date().toISOString(),
-      Buffer.from(screenshot, "base64"),
-      "image/png"
-    );
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-"); // Ganti karakter tidak valid
+    const fileName = `Screenshot_${timestamp}.png`;
+
+    // Tambahkan ke laporan Allure
+    addAttachment(fileName, Buffer.from(screenshot, "base64"), "image/png");
   }
-}
+
+  }
+  
 
 module.exports = new Utils();
