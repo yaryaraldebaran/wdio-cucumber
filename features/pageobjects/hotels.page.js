@@ -27,9 +27,21 @@ class HotelsPage extends Page{
     async inputByLabel(text) {
         return $(`//input[ancestor::*[span/label/scrm-label[text()[normalize-space()='${text}']]]]`);
     }
+        /**
+     * @returns {import('webdriverio').Element}
+    */
+
     get buttonSearch(){
         return $(`//button[@type='submit']`)
     }
+
+    /**
+     * @returns {import('webdriverio').Element}
+    */
+   async btnByText(text){
+    return await $(`//button[contains(normalize-space(.), '${text}')]`)
+   }
+
     /**
     * @returns {import('webdriverio').Element}
     */
@@ -69,21 +81,24 @@ class HotelsPage extends Page{
     /**
     * @returns {import('webdriverio').Element}
     */
-    get btnBookNow(){
-        return $("//button[normalize-space()='Book Now']")
+    async btnBookByRoomType(text){
+        return $(`(//div[./div/h3[text()='${text}']]/following-sibling::div[@class='roomGrid']/div/div/form/button[./strong])[1]`)
     }
     async inputPersonalInfoByLabelDynamic(text){
         return $(`//input[following-sibling::label[normalize-space(text())='${text}'] and ancestor::div/div/h3[normalize-space(text())='Personal Information']]`)
     }
 
-    get inputTravellerFirstName(){
-        return $(`//div[./div/h3[normalize-space(text())='Travellers Information']]/descendant::input[@placeholder='First Name'][1]`)
+    get counterTraveller(){
+        return $$(`//div[./strong]`)
     }
-    get inputTravellerLastName(){
-        return $(`//div[./div/h3[normalize-space(text())='Travellers Information']]/descendant::input[@placeholder='Last Name'][1]`)
+    async inputTravellerFirstNamebyOrder(text){
+        return $(`//div[./div/h3[normalize-space(text())='Travellers Information']]/descendant::input[@placeholder='First Name'][${text}]`)
     }
-    get dropdownTravellerTitle(){
-        return $(`(//select[./following-sibling::label[text()='Title']])[1]`)
+    async inputTravellerLastNamebyOrder(text){
+        return $(`//div[./div/h3[normalize-space(text())='Travellers Information']]/descendant::input[@placeholder='Last Name'][${text}]`)
+    }
+    async dropdownTravellerTitlebyOrder(text){
+        return $(`(//select[./following-sibling::label[text()='Title']])[${text}]`)
     }
     get checkboxTermsCondition(){
         return $(`//input[@id='agreechb']`)
@@ -93,6 +108,19 @@ class HotelsPage extends Page{
     }
     async txtHeaderStatusByField(text){
         return $(`//strong[text()='${text}']/following-sibling::span`)
+    }
+    /**
+    * @returns {import('webdriverio').Element}
+    */
+    async txtTrxDetailStatusByLabel(text){
+        return $(`//span[preceding-sibling::strong[text()='${text}']]`)
+    }
+
+    get txtBookingReference(){
+        return $(`//table[thead//th[text()='Booking Reference']]/tbody/tr/th[2]`)
+    }
+    get radioTnC(){
+        return $(`//input[@id='agreechb']`)
     }
 
 }
