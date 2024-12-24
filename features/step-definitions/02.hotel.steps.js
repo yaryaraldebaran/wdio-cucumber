@@ -34,7 +34,10 @@ const selectHotel = async (hotelName) => {
   // const txtGetApp = await $("//strong[normalize-space()='Get The App!']")
   // await txtGetApp.scrollIntoView()
   const btnHide = await $("//button[text()='Hide']");
-  await btnHide.click();
+  if (btnHide.isExisting() && btnHide.isDisplayed()){
+    await btnHide.click();
+  }
+  
   const btnView = await hotelsPage.btnViewByHotelName(hotelName);
   await btnView.waitForDisplayed({
     timeout: 5000,
