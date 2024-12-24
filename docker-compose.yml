@@ -1,6 +1,6 @@
 services:
   wdio:
-    image: wdio-cucumber:latest
+    image: wdio-cucumber_2:latest
     user: root
     volumes:
       - C:/ProgramData/Jenkins/.jenkins/workspace/docker-wdio-3:/app
