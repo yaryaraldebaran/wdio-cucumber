@@ -46,10 +46,10 @@ pipeline {
                 }
             }
         }
-        stage('Archive Reports') {
-            steps {
-                echo 'Archiving test reports...'
-                script {
+    }
+    post {
+        always {
+            script {
                     def reportDir = "${PROJECT_DIR}/allure-results"
                     if (fileExists(reportDir)) {
                         archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
@@ -57,11 +57,6 @@ pipeline {
                         echo "No reports found to archive."
                     }
                 }
-            }
-        }
-    }
-    post {
-        always {
             echo 'Cleaning up Docker Compose resources...'
             bat 'docker-compose down'
         }
