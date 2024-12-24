@@ -21,6 +21,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                deleteDir()
                 git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
             }
         }
@@ -28,6 +29,7 @@ pipeline {
             steps {
                 echo 'Running tests with Docker Compose...'
                 script {
+
                     def FEATURE_DESCRIPTION_MAP = [
                         '@HotelFeature'  : 'Fitur Hotel',
                         '@FlightFeature' : 'Fitur Tiket Pesawat',
