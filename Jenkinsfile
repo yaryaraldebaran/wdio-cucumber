@@ -41,7 +41,7 @@ pipeline {
                     def featureDescription = FEATURE_DESCRIPTION_MAP[cucumberTag]
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
-
+                    bat "chmod -R 777"
                     bat """
                         docker-compose run -e FEATURE_TAG='${cucumberTag}' wdio
                     """
