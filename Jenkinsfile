@@ -22,11 +22,13 @@ pipeline {
         stage('Checkout') {
             agent any
             steps {
-                script {
-                    deleteDir()
-                    git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
-                }
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            script {
+                deleteDir()
+                git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
             }
+        }
+    }
         }
         stage('Clean up Docker') {
             agent any
