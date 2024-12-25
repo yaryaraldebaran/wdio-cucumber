@@ -1,24 +1,37 @@
 # Use Node.js 20 as the base image
 FROM node:20
 
+# Create the 'app' user and group (Debian/Ubuntu style)
+RUN groupadd -r app && useradd -r -g app app
+
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the package.json and package-lock.json
+# Copy package.json and package-lock.json first (to take advantage of Docker caching)
 COPY package*.json ./
 
-# Install Firefox, Xvfb, and x11-utils (for verifying Xvfb)
+# Change ownership of package.json and package-lock.json to 'app' before installing dependencies
+RUN chown app:app /app/package*.json
+
+# Install system dependencies (Firefox, Xvfb, and x11-utils) as root
+USER root
 RUN apt-get update && apt-get install -y \
     firefox-esr \
     xvfb \
     x11-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js dependencies
+# Install Node.js dependencies (npm install)
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
+
+# Change ownership of the entire application files to the 'app' user
+RUN chown -R app:app /app
+
+# Switch to the 'app' user for runtime
+USER app
 
 # Set DISPLAY environment variable for virtual display
 ENV DISPLAY=:99

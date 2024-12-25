@@ -1,7 +1,7 @@
 services:
   wdio:
     image: wdio-cucumber_2:latest
-    user: root  # Temporarily using root for container initialization
+    user: root  # Use root during setup and initialization
     volumes:
       - C:/ProgramData/Jenkins/.jenkins/workspace/docker-wdio-3:/app
       - C:/ProgramData/Jenkins/.jenkins/workspace/docker-wdio-3/allure-results:/app/allure-results
