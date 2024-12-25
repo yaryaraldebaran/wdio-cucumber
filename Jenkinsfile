@@ -17,7 +17,6 @@ pipeline {
         DOCKER_IMAGE = 'wdio-cucumber:latest'
         ALLURE_RESULTS = 'allure-results'
         PROJECT_DIR = 'C:/Users/Ahyar/Documents/website automation proj/webdriverio-cucumber-2'
-        CUSTOM_WORKSPACE = 'C:/Users/Ahyar/Documents/jenkins_workspace'
     }
     stages {
         stage('Checkout') {
@@ -40,7 +39,6 @@ pipeline {
             steps {
                 echo 'Running tests with Docker Compose...'
                 script {
-
                     def FEATURE_DESCRIPTION_MAP = [
                         '@HotelFeature'  : 'Fitur Hotel',
                         '@FlightFeature' : 'Fitur Tiket Pesawat',
@@ -61,15 +59,15 @@ pipeline {
         }
     }
     post {
-    always {
-        // Wrap the steps that require node context inside a 'node' block
-        node {
-            script {
-                def reportDir = "${PROJECT_DIR}/allure-results"
-                if (fileExists(reportDir)) {
-                    archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
-                } else {
-                    echo "No reports found to archive."
+        always {
+            node {
+                script {
+                    def reportDir = "${env.PROJECT_DIR}/allure-results"
+                    if (fileExists(reportDir)) {
+                        archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
+                    } else {
+                        echo "No reports found to archive."
+                    }
                 }
             }
             echo 'Cleaning up Docker Compose resources...'
@@ -82,6 +80,4 @@ pipeline {
     failure {
         echo 'Tests failed.'
     }
-}
-
 }
