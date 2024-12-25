@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none  // No default agent for the pipeline
     parameters {
         choice(
             name: 'FEATURE_TAG',
@@ -21,22 +21,30 @@ pipeline {
     }
     stages {
         stage('Checkout') {
-            agent any
+            agent any  // Use any available agent
             steps {
                 script {
-                    deleteDir()
-                    git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
+                    // Switch to custom workspace before running git checkout
+                    dir("${CUSTOM_WORKSPACE}") {
+                        deleteDir()  // Clean up the workspace
+                        git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
+                    }
                 }
             }
         }
         stage('Clean up Docker') {
-            agent any
+            agent any  // Use any available agent
             steps {
-                bat 'docker-compose down --remove-orphans || exit 0'
+                script {
+                    // Run docker-compose in the custom workspace
+                    dir("${CUSTOM_WORKSPACE}") {
+                        bat 'docker-compose down --remove-orphans || exit 0'
+                    }
+                }
             }
         }
         stage('Run Tests') {
-            agent any
+            agent any  // Use any available agent
             steps {
                 echo 'Running tests with Docker Compose...'
                 script {
@@ -52,26 +60,33 @@ pipeline {
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
                     
-                    // Adjust docker-compose run with volume mapping to ensure Jenkins workspace is used
-                    bat """
-                        docker-compose -f docker-compose.yml run -v C:/Users/Ahyar/Documents/jenkins_workspace:/app wdio
-                    """
+                    // Run docker-compose in the custom workspace
+                    dir("${CUSTOM_WORKSPACE}") {
+                        bat """
+                            docker-compose -f docker-compose.yml run -v ${CUSTOM_WORKSPACE}:/app wdio
+                        """
+                    }
                 }
             }
         }
     }
     post {
         always {
-            script {
-                def reportDir = "${PROJECT_DIR}/allure-results"
-                if (fileExists(reportDir)) {
-                    archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
-                } else {
-                    echo "No reports found to archive."
+            node {
+                script {
+                    def reportDir = "${PROJECT_DIR}/allure-results"
+                    if (fileExists(reportDir)) {
+                        archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
+                    } else {
+                        echo "No reports found to archive."
+                    }
+                }
+                echo 'Cleaning up Docker Compose resources...'
+                // Clean up Docker resources in the custom workspace
+                dir("${CUSTOM_WORKSPACE}") {
+                    bat 'docker-compose down'
                 }
             }
-            echo 'Cleaning up Docker Compose resources...'
-            bat 'docker-compose down'
         }
         success {
             echo 'Tests completed successfully!'
