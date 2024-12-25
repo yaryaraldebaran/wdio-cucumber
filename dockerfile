@@ -8,10 +8,7 @@ RUN groupadd -r app && useradd -r -g app app
 WORKDIR /app
 
 # Copy package.json and package-lock.json first (to take advantage of Docker caching)
-COPY package*.json ./
-
-# Change ownership of package.json and package-lock.json to 'app' before installing dependencies
-RUN chown app:app /app/package*.json
+COPY package*.json ./ 
 
 # Install system dependencies (Firefox, Xvfb, and x11-utils) as root
 USER root
@@ -21,8 +18,12 @@ RUN apt-get update && apt-get install -y \
     x11-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js dependencies (npm install)
-RUN npm install
+# Change ownership of package.json and package-lock.json to 'app' before installing dependencies
+RUN chown app:app /app/package*.json
+
+# Install Node.js dependencies
+USER app
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application code
 COPY . .

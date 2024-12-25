@@ -48,7 +48,7 @@ pipeline {
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
                     
                     bat """
-                        docker-compose run -e FEATURE_TAG='${cucumberTag}' wdio
+                        docker-compose run -e FEATURE_TAG=${cucumberTag} wdio
                     """
                 }
             }
