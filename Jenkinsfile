@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        any {
-            customWorkspace 'C:/Users/Ahyar/Documents/jenkins_workspace'
-        }
-    }
+    agent none
     parameters {
         choice(
             name: 'FEATURE_TAG',
@@ -21,20 +17,29 @@ pipeline {
         DOCKER_IMAGE = 'wdio-cucumber:latest'
         ALLURE_RESULTS = 'allure-results'
         PROJECT_DIR = 'C:/Users/Ahyar/Documents/website automation proj/webdriverio-cucumber-2'
+        CUSTOM_WORKSPACE = 'C:/Users/Ahyar/Documents/jenkins_workspace'
     }
     stages {
         stage('Checkout') {
+            agent any
             steps {
-                deleteDir()
-                git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
+                script {
+                    // Mengubah direktori sebelum checkout
+                    dir(CUSTOM_WORKSPACE) {
+                        deleteDir()
+                        git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
+                    }
+                }
             }
         }
         stage('Clean up Docker') {
+            agent any
             steps {
                 bat 'docker-compose down --remove-orphans || exit 0'
             }
         }
         stage('Run Tests') {
+            agent any
             steps {
                 echo 'Running tests with Docker Compose...'
                 script {
