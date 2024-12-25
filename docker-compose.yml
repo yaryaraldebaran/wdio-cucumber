@@ -1,3 +1,4 @@
+version: '3'
 services:
   wdio:
     image: wdio-cucumber_2:latest
@@ -8,7 +9,7 @@ services:
     environment:
       - DISPLAY=:99
       - FEATURE_TAG=${FEATURE_TAG}
-     command: >
+    command: >
       sh -c "Xvfb :99 -screen 0 1280x1024x24 & 
       npx wdio run wdio.conf.js --cucumberOpts.tagExpression='${FEATURE_TAG}'"
     working_dir: /app
