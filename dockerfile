@@ -22,8 +22,17 @@ ENV HOME=/app
 # Copy package.json and package-lock.json first (to take advantage of Docker caching)
 COPY package*.json ./
 
+# Debug step: List the contents of /app to check file ownership
+RUN ls -l /app
+
+# Debug step: Check which user is running the commands
+RUN whoami
+
 # Change ownership of the /app directory to the 'app' user
 RUN chown -R app:app /app
+
+# Debug step: Set proper permissions for /app (if necessary)
+RUN chmod -R 775 /app
 
 # Switch to the 'app' user for runtime
 USER app
