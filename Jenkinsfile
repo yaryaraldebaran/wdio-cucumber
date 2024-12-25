@@ -60,7 +60,7 @@ pipeline {
     }
     post {
         always {
-            node {
+            node('master') {  // Specify a label for the node block
                 script {
                     def reportDir = "${env.PROJECT_DIR}/allure-results"
                     if (fileExists(reportDir)) {
@@ -73,11 +73,11 @@ pipeline {
             echo 'Cleaning up Docker Compose resources...'
             bat 'docker-compose down'
         }
-    }
-    success {
-        echo 'Tests completed successfully!'
-    }
-    failure {
-        echo 'Tests failed.'
+        success {
+            echo 'Tests completed successfully!'
+        }
+        failure {
+            echo 'Tests failed.'
+        }
     }
 }
