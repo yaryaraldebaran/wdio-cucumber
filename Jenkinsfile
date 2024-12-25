@@ -17,18 +17,17 @@ pipeline {
         DOCKER_IMAGE = 'wdio-cucumber:latest'
         ALLURE_RESULTS = 'allure-results'
         PROJECT_DIR = 'C:/Users/Ahyar/Documents/website automation proj/webdriverio-cucumber-2'
+        CUSTOM_WORKSPACE = 'C:/Users/Ahyar/Documents/jenkins_workspace'
     }
     stages {
         stage('Checkout') {
             agent any
             steps {
-        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            script {
-                deleteDir()
-                git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
+                script {
+                    deleteDir()
+                    git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
+                }
             }
-        }
-    }
         }
         stage('Clean up Docker') {
             agent any
@@ -53,8 +52,9 @@ pipeline {
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
                     
+                    // Adjust docker-compose run with volume mapping to ensure Jenkins workspace is used
                     bat """
-                        docker-compose run -e FEATURE_TAG=${cucumberTag} wdio
+                        docker-compose -f docker-compose.yml run -v C:/Users/Ahyar/Documents/jenkins_workspace:/app wdio
                     """
                 }
             }
@@ -62,18 +62,18 @@ pipeline {
     }
     post {
         always {
-            node('master') {  // Specify a label for the node block
+            node {
                 script {
-                    def reportDir = "${env.PROJECT_DIR}/allure-results"
+                    def reportDir = "${PROJECT_DIR}/allure-results"
                     if (fileExists(reportDir)) {
                         archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
                     } else {
                         echo "No reports found to archive."
                     }
                 }
+                echo 'Cleaning up Docker Compose resources...'
+                bat 'docker-compose down'
             }
-            echo 'Cleaning up Docker Compose resources...'
-            bat 'docker-compose down'
         }
         success {
             echo 'Tests completed successfully!'
