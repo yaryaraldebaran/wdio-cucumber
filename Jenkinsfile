@@ -60,10 +60,10 @@ pipeline {
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
                     
-                    // Run docker-compose in the custom workspace
+                    // Run docker-compose with dynamic FEATURE_TAG
                     dir("${CUSTOM_WORKSPACE}") {
                         bat """
-                            docker-compose -f docker-compose.yml run -v ${CUSTOM_WORKSPACE}:/app wdio
+                            docker-compose -f docker-compose.yml run -v ${CUSTOM_WORKSPACE}:/app -e FEATURE_TAG=${cucumberTag} wdio
                         """
                     }
                 }
