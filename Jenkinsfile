@@ -72,19 +72,19 @@ pipeline {
     }
     post {
         always {
-            node {
-                script {
-                    def reportDir = "${PROJECT_DIR}/allure-results"
-                    if (fileExists(reportDir)) {
-                        archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
-                    } else {
-                        echo "No reports found to archive."
-                    }
-                }
+            script {
+                // Cleanup Docker Compose resources directly without using node
                 echo 'Cleaning up Docker Compose resources...'
-                // Clean up Docker resources in the custom workspace
                 dir("${CUSTOM_WORKSPACE}") {
                     bat 'docker-compose down'
+                }
+            }
+            script {
+                def reportDir = "${PROJECT_DIR}/allure-results"
+                if (fileExists(reportDir)) {
+                    archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
+                } else {
+                    echo "No reports found to archive."
                 }
             }
         }
