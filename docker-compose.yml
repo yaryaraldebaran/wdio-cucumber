@@ -1,7 +1,7 @@
 version: '3'
 services:
   wdio:
-    image: wdio-cucumber_2:latest
+    image: wdio-cucumber:latest
     user: root  # Use root during setup and initialization
     volumes:
       - .:/app

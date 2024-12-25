@@ -2,13 +2,10 @@
 FROM node:20
 
 # Create the 'app' user and group (Debian/Ubuntu style)
-RUN groupadd -r app && useradd -r -g app app
+RUN groupadd -r app && useradd -r -g app -m app
 
 # Set the working directory inside the container
 WORKDIR /app
-
-# Copy package.json and package-lock.json first (to take advantage of Docker caching)
-COPY package*.json ./ 
 
 # Install system dependencies (Firefox, Xvfb, and x11-utils) as root
 USER root
@@ -18,20 +15,30 @@ RUN apt-get update && apt-get install -y \
     x11-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Change ownership of package.json and package-lock.json to 'app' before installing dependencies
-RUN chown app:app /app/package*.json
+# Set the npm cache directory and set a writable home directory for the 'app' user
+RUN mkdir -p /app/.npm-cache
+ENV HOME=/app
+
+# Copy package.json and package-lock.json first (to take advantage of Docker caching)
+COPY package*.json ./
+
+# Change ownership of the /app directory to the 'app' user
+RUN chown -R app:app /app
+
+# Switch to the 'app' user for runtime
+USER app
 
 # Install Node.js dependencies
-USER app
 RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application code
 COPY . .
 
 # Change ownership of the entire application files to the 'app' user
+USER root
 RUN chown -R app:app /app
 
-# Switch to the 'app' user for runtime
+# Switch back to the 'app' user for runtime
 USER app
 
 # Set DISPLAY environment variable for virtual display
