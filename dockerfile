@@ -1,7 +1,7 @@
 # Use Node.js 20 as the base image
 FROM node:20
 
-# Create the 'app' user and group (Debian/Ubuntu style)
+# Create a user and group 'app'
 RUN groupadd -r app && useradd -r -g app -m app
 
 # Set the working directory inside the container
@@ -22,28 +22,23 @@ ENV HOME=/app
 # Copy package.json and package-lock.json first (to take advantage of Docker caching)
 COPY package*.json ./
 
+# Change ownership of the package files to the 'app' user
+RUN chown -R app:app /app
+
 # Debug step: List the contents of /app to check file ownership
 RUN ls -l /app
 
 # Debug step: Check which user is running the commands
 RUN whoami
 
-# Change ownership of the /app directory to the 'app' user
-RUN chown -R app:app /app
-
-# Debug step: Set proper permissions for /app (if necessary)
-RUN chmod -R 775 /app
-
-# Switch to the 'app' user for runtime
+# Install Node.js dependencies with legacy peer deps
 USER app
-
-# Install Node.js dependencies
 RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application code
 COPY . .
 
-# Change ownership of the entire application files to the 'app' user
+# Ensure the 'app' user has access to the application files
 USER root
 RUN chown -R app:app /app
 

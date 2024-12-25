@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        any {
+            customWorkspace 'C:/Users/Ahyar/Documents/jenkins_workspace'
+        }
+    }
     parameters {
         choice(
             name: 'FEATURE_TAG',
