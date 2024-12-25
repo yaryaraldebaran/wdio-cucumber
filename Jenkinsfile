@@ -24,11 +24,8 @@ pipeline {
             agent any
             steps {
                 script {
-                    // Mengubah direktori sebelum checkout
-                    dir(CUSTOM_WORKSPACE) {
-                        deleteDir()
-                        git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
-                    }
+                    deleteDir()
+                    git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
                 }
             }
         }
@@ -64,23 +61,27 @@ pipeline {
         }
     }
     post {
-        always {
+    always {
+        // Wrap the steps that require node context inside a 'node' block
+        node {
             script {
-                    def reportDir = "${PROJECT_DIR}/allure-results"
-                    if (fileExists(reportDir)) {
-                        archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
-                    } else {
-                        echo "No reports found to archive."
-                    }
+                def reportDir = "${PROJECT_DIR}/allure-results"
+                if (fileExists(reportDir)) {
+                    archiveArtifacts artifacts: "${reportDir}/**/*", allowEmptyArchive: true
+                } else {
+                    echo "No reports found to archive."
                 }
+            }
             echo 'Cleaning up Docker Compose resources...'
             bat 'docker-compose down'
         }
-        success {
-            echo 'Tests completed successfully!'
-        }
-        failure {
-            echo 'Tests failed.'
-        }
     }
+    success {
+        echo 'Tests completed successfully!'
+    }
+    failure {
+        echo 'Tests failed.'
+    }
+}
+
 }
