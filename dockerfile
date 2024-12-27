@@ -22,6 +22,12 @@ ENV HOME=/app
 # Copy package.json and package-lock.json first (to take advantage of Docker caching)
 COPY package*.json ./
 
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the project files
+COPY . /app
+
 # Change ownership of the package files to the 'app' user
 RUN chown -R app:app /app
 

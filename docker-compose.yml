@@ -3,6 +3,8 @@ services:
     image: wdio-cucumber_2:latest
     user: root  # Gunakan root untuk memastikan izin file
     volumes:
+      - ./jenkins_workspace:/app
+      - /app/node_modules
       - .:/app
       - ./allure-results:/app/allure-results
       - ~/.npm:/root/.npm  # Cache npm di direktori lokal
