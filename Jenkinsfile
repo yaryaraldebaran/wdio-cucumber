@@ -1,5 +1,5 @@
 pipeline {
-    agent none  // No default agent for the pipeline
+    agent any  // No default agent for the pipeline
     parameters {
         choice(
             name: 'FEATURE_TAG',
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     // Switch to custom workspace before running git checkout
-                    dir("${CUSTOM_WORKSPACE}") {
+                    dir(env.CUSTOM_WORKSPACE) {
                         deleteDir()  // Clean up the workspace
                         git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', credentialsId: '56886b6a-2044-4bea-8434-b13331da1fd9', branch: 'main'
                     }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     // Run docker-compose in the custom workspace
-                    dir("${CUSTOM_WORKSPACE}") {
+                    dir(env.CUSTOM_WORKSPACE) {
                         bat 'docker-compose down --remove-orphans || exit 0'
                     }
                 }
@@ -61,7 +61,7 @@ pipeline {
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
                     
                     // Run docker-compose with dynamic FEATURE_TAG
-                    dir("${CUSTOM_WORKSPACE}") {
+                    dir(env.CUSTOM_WORKSPACE) {
                         bat """
                             docker-compose -f docker-compose.yml run -v ${CUSTOM_WORKSPACE}:/app -e FEATURE_TAG=${cucumberTag} wdio
                         """
@@ -75,7 +75,7 @@ pipeline {
             script {
                 // Cleanup Docker Compose resources directly without using node
                 echo 'Cleaning up Docker Compose resources...'
-                dir("${CUSTOM_WORKSPACE}") {
+                dir(env.CUSTOM_WORKSPACE) {
                     bat 'docker-compose down'
                 }
             }

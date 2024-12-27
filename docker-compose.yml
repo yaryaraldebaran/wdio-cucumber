@@ -1,7 +1,7 @@
 services:
   wdio:
     image: wdio-cucumber_2:latest
-    user: root  # Use root during setup and initialization
+    user: app  # Use root during setup and initialization
     volumes:
       - .:/app
       - ./allure-results:/app/allure-results
