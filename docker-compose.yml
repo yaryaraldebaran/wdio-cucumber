@@ -1,13 +1,16 @@
 services:
   wdio:
     image: wdio-cucumber_2:latest
-    user: app  # Ensure that this is the non-root user for the container
+    user: root  # Gunakan root untuk memastikan izin file
     volumes:
       - .:/app
       - ./allure-results:/app/allure-results
     environment:
       - DISPLAY=:99
+      - FEATURE_TAG=${FEATURE_TAG}
     command: >
-      sh -c "Xvfb :99 -screen 0 1280x1024x24 & 
-      npx wdio run wdio.conf.js --cucumberOpts.tagExpression='${FEATURE_TAG}'"
+      sh -c "cp -r /tmp/initial-files/* /app &&
+             npm install &&
+             Xvfb :99 -screen 0 1280x1024x24 &
+             npx wdio run wdio.conf.js --cucumberOpts.tagExpression='${FEATURE_TAG}'"
     working_dir: /app

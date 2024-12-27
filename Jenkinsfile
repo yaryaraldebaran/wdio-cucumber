@@ -14,7 +14,7 @@ pipeline {
     }
     environment {
         GIT_CREDENTIALS = credentials('56886b6a-2044-4bea-8434-b13331da1fd9')
-        DOCKER_IMAGE = 'wdio-cucumber:latest'
+        DOCKER_IMAGE = 'wdio-cucumber_2:latest'
         ALLURE_RESULTS = 'allure-results'
         PROJECT_DIR = 'C:/Users/Ahyar/Documents/website automation proj/webdriverio-cucumber-2'
         CUSTOM_WORKSPACE = 'C:/Users/Ahyar/Documents/jenkins_workspace'
