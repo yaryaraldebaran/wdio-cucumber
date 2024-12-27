@@ -42,7 +42,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    def FEATURE_DESCRIPTION_MAP = [
+                    dir(env.CUSTOM_WORKSPACE) {
+                                            def FEATURE_DESCRIPTION_MAP = [
                         '@HotelFeature'  : 'Fitur Hotel',
                         '@FlightFeature' : 'Fitur Tiket Pesawat',
                         '@BusFeature'    : 'Fitur Bus',
@@ -57,6 +58,8 @@ pipeline {
                         docker-compose -f docker-compose.yml run \
                         -e FEATURE_TAG=${cucumberTag} wdio
                     """
+
+                    }
                 }
             }
         }
@@ -70,14 +73,9 @@ pipeline {
         }
         success {
             script {
-                echo 'Copying Allure results from container to workspace...'
-                
-                // Copy Allure results from the container to Jenkins workspace
-                bat 'docker cp wdio:/app/allure-results C:/Users/Ahyar/Documents/jenkins_workspace/allure-results'
-                
-                echo 'Generating Allure report...'
+                echo 'Generating and publishing Allure report...'
                 // Generate Allure report
-                bat 'allure generate allure-results --clean -o allure-report'
+                bat 'allure generate ./allure-results --clean -o ./allure-report'
                 
                 // Publish Allure report
                 allure([
@@ -85,13 +83,6 @@ pipeline {
                     reportFiles: '**/allure-report/**/*',
                     allowEmptyResults: true
                 ])
-            }
-        }
-        failure {
-            script {
-                echo 'Test failed, generating Allure report...'
-                // You can choose to generate reports even on failure if necessary
-                bat 'allure generate allure-results --clean -o allure-report'
             }
         }
     }

@@ -10,10 +10,11 @@ services:
       - ~/.npm:/root/.npm  # Cache npm di direktori lokal
     environment:
       - DISPLAY=:99
-      - FEATURE_TAG=${FEATURE_TAG:-@HotelFeature}
+      - FEATURE_TAG=${FEATURE_TAG}
     command: >
       sh -c "cp -r /tmp/initial-files/* /app &&
       npm install &&
       Xvfb :99 -screen 0 1280x1024x24 & sleep 2 &&
-      npx wdio run wdio.conf.js --cucumberOpts.tags='${FEATURE_TAG}'"
+      npx wdio run wdio.conf.js --cucumberOpts.tags='${FEATURE_TAG}' &&
+      allure generate /app/allure-results --clean -o /app/allure-report"
     working_dir: /app
