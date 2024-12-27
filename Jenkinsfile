@@ -49,7 +49,7 @@ pipeline {
                         '@SchoolFeature' : 'Fitur Sekolah'
                     ]
                     
-                    def cucumberTag = params.FEATURE_TAG
+                    
                     def featureDescription = FEATURE_DESCRIPTION_MAP[cucumberTag]
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
