@@ -10,7 +10,7 @@ services:
       - ~/.npm:/root/.npm  # Cache npm di direktori lokal
     environment:
       - DISPLAY=:99
-      - FEATURE_TAG=${FEATURE_TAG}
+      - FEATURE_TAG=${FEATURE_TAG:-@HotelFeature}
     command: >
       sh -c "cp -r /tmp/initial-files/* /app &&
       npm install &&
