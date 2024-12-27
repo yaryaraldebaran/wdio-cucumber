@@ -1,14 +1,13 @@
 services:
   wdio:
     image: wdio-cucumber_2:latest
-    user: app  # Use root during setup and initialization
+    user: app  # Ensure that this is the non-root user for the container
     volumes:
       - .:/app
       - ./allure-results:/app/allure-results
     environment:
       - DISPLAY=:99
-      - FEATURE_TAG=${FEATURE_TAG}
     command: >
       sh -c "Xvfb :99 -screen 0 1280x1024x24 & 
-      npx wdio run wdio.conf.js --cucumberOpts.tagExpression='${FEATURE_TAG}' --yes"
+      npx wdio run wdio.conf.js --cucumberOpts.tagExpression='${FEATURE_TAG}'"
     working_dir: /app
