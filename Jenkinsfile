@@ -1,12 +1,12 @@
 pipeline {
     agent any
-	parameters {
+    parameters {
         choice(
             name: 'FEATURE_TAG',
             choices: [
-                '@HotelFeature', 
-                '@FlightFeature', 
-                '@BusFeature', 
+                '@HotelFeature',
+                '@FlightFeature',
+                '@BusFeature',
                 '@SchoolFeature'
             ],
             description: 'Pilih fitur yang ingin dijalankan untuk testing'
@@ -23,8 +23,8 @@ pipeline {
                 script {
                     dir(env.CUSTOM_WORKSPACE) {
                         deleteDir()
-                        git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
-                            credentialsId: env.GIT_CREDENTIALS, 
+                        git url: 'https://github.com/yaryaraldebaran/wdio-cucumber',
+                            credentialsId: env.GIT_CREDENTIALS,
                             branch: 'main'
                     }
                 }
@@ -42,20 +42,19 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-				    def FEATURE_DESCRIPTION_MAP = [
-                        '@HotelFeature'  : 'Fitur Hotel',
-                        '@FlightFeature' : 'Fitur Tiket Pesawat',
-                        '@BusFeature'    : 'Fitur Bus',
-                        '@SchoolFeature' : 'Fitur Sekolah'
+                    def FEATURE_DESCRIPTION_MAP = [
+                        '@HotelFeature': 'Fitur Hotel',
+                        '@FlightFeature': 'Fitur Tiket Pesawat',
+                        '@BusFeature': 'Fitur Bus',
+                        '@SchoolFeature': 'Fitur Sekolah'
                     ]
-                    
-                    
-                    def featureDescription = FEATURE_DESCRIPTION_MAP[cucumberTag]
+
+                    def cucumberTag = params.FEATURE_TAG ?: '@defaultTag'
+                    def featureDescription = FEATURE_DESCRIPTION_MAP.get(cucumberTag, 'Deskripsi tidak ditemukan')
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
-                    def cucumberTag = params.FEATURE_TAG ?: '@defaultTag'
                     bat """
-                        docker-compose -f docker-compose.yml run \
+                        docker-compose -f docker-compose.yml run ^
                         -e FEATURE_TAG=${cucumberTag} wdio
                     """
                 }
