@@ -1,6 +1,6 @@
 services:
   wdio:
-    image: wdio-cucumber_3:latest
+    image: wdio-cucumber_4:latest
     user: root  # Gunakan root untuk memastikan izin file
     volumes:
       - ./jenkins_workspace:/app
