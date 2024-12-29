@@ -25,7 +25,7 @@ pipeline {
                         deleteDir()
                         git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
                             credentialsId: env.GIT_CREDENTIALS, 
-                            branch: 'main'
+                            branch: 'development'
                     }
                 }
             }
