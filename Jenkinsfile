@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        choice(name: 'BRANCH', choices: getBranches(), description: 'Pilih branch untuk dibuild')
+        choice(name: 'BRANCH', choices: getBranches()?:'main', description: 'Pilih branch untuk dibuild')
         choice(
             name: 'FEATURE_TAG',
             choices: [
@@ -40,10 +40,10 @@ pipeline {
             steps {
                 script {
                     def FEATURE_DESCRIPTION_MAP = [
-                    '@HotelFeature'  : 'Fitur Hotel',
-                    '@FlightFeature' : 'Fitur Tiket Pesawat',
-                    '@BusFeature'    : 'Fitur Bus',
-                    '@SchoolFeature' : 'Fitur Sekolah'
+                        '@HotelFeature'  : 'Fitur Hotel',
+                        '@FlightFeature' : 'Fitur Tiket Pesawat',
+                        '@BusFeature'    : 'Fitur Bus',
+                        '@SchoolFeature' : 'Fitur Sekolah'
                     ]
                     
                     def cucumberTag = params.FEATURE_TAG ?: '@defaultTag'
@@ -54,11 +54,10 @@ pipeline {
                         docker-compose -f docker-compose.yml run \
                         -e FEATURE_TAG=${cucumberTag} wdio
                     """
+                } 
+            } 
+} 
 
-                    }
-                }
-            }
-        }
     }
     post {
         always {
@@ -83,6 +82,7 @@ pipeline {
         }
     }
 }
+
 def getBranches() {
     def branches = []
     def proc = "git ls-remote --heads https://github.com/yaryaraldebaran/wdio-cucumber".execute()
