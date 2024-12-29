@@ -1,6 +1,6 @@
 services:
   wdio:
-    image: wdio-cucumber_4:latest
+    image: wdio-cucumber_master:latest
     user: root
     volumes:
       - ./jenkins_workspace:/app
@@ -10,11 +10,13 @@ services:
       - ~/.npm:/root/.npm
     environment:
       - DISPLAY=:99
-      - FEATURE_TAG=${FEATURE_TAG:-@DefaultFeature} # Default value for FEATURE_TAG
+      - FEATURE_TAG=${FEATURE_TAG:-@HotelFeature} # Default value for FEATURE_TAG
     working_dir: /app
     command: >
-      sh -c "cp -r /tmp/initial-files/* /app &&
+      sh -c "
+      cp -r /tmp/initial-files/* /app &&
       npm install &&
       Xvfb :99 -screen 0 1280x1024x24 & sleep 2 &&
       npx wdio run wdio.conf.js --cucumberOpts.tags='${FEATURE_TAG}' &&
-      allure generate /app/allure-results --clean -o /app/allure-report"
+      allure generate /app/allure-results --clean -o /app/allure-report
+      "
