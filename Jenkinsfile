@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        choice(name: 'BRANCH', choices: ['main', 'development', 'feature1', 'feature2'], description: 'Pilih branch untuk dibuild',defaultValue: 'development')
+        choice(name: 'BRANCH', choices: ['main', 'development', 'feature1', 'feature2'], description: 'Pilih branch untuk dibuild', defaultValue: 'development')
         choice(
             name: 'FEATURE_TAG',
             choices: [
