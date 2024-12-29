@@ -9,23 +9,23 @@ Feature: Hotel Feature Travel PHP
 
   Scenario Outline: Book a hotel without changing any traveller option 
     Given User have searched for hotels in "Dubai"
-    And User select card hotel "Sheraton Jumeirah Beach Resort"
-    When User create hotel booking for "1" night and "JUNIOR SUITE SEA VIEW" type
+    And User select card hotel "Golden Tulip Deira ( Former Nihal Palace)"
+    When User create hotel booking for "1" night and "SINGLE DELUXE" type
     And Registered User continue finishing transaction
     Then User have the transaction id
 
   @BookNoLogin
   Scenario: Book a hotel without login 
     Given User have searched for hotels in "Dubai" without login
-    And User select card hotel "Sheraton Jumeirah Beach Resort"
-    When User create hotel booking for "1" night and "JUNIOR SUITE SEA VIEW" type
+    And User select card hotel "Golden Tulip Deira ( Former Nihal Palace)"
+    When User create hotel booking for "1" night and "SINGLE DELUXE" type
     And Non-Registered User continue finishing transaction
     Then User have the transaction id
 
   @CancelBook
   Scenario: Cancel book a hotel directly after booking
     Given User have searched for hotels in "Dubai"
-    And User select card hotel "Sheraton Jumeirah Beach Resort"
+    And User select card hotel "Golden Tulip Deira ( Former Nihal Palace)"
     And User create hotel booking for "2" night
     And Registered User continue finishing transaction
     And User have the transaction id

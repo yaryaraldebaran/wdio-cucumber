@@ -52,9 +52,9 @@ exports.config = {
   //
   capabilities: [
     {
-      browserName: "firefox",
-      'moz:firefoxOptions': {
-      args: ['-headless']} 
+      browserName: "firefox"
+      ,'moz:firefoxOptions': {
+        args: ['-headless']} 
     
 
 
