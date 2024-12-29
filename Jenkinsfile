@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        choice(name: 'BRANCH', choices: getBranches()?:'main', description: 'Pilih branch untuk dibuild')
+        choice(name: 'BRANCH', choices: ['main', 'develop', 'feature1', 'feature2'], description: 'Pilih branch untuk dibuild')
         choice(
             name: 'FEATURE_TAG',
             choices: [
@@ -81,20 +81,4 @@ pipeline {
             }
         }
     }
-}
-
-def getBranches() {
-    def branches = []
-    // Menjalankan perintah git dan menyimpan hasil output sebagai string
-    def proc = bat(script: "git ls-remote --heads https://github.com/yaryaraldebaran/wdio-cucumber", returnStdout: true).trim()
-
-    // Mengolah setiap baris hasil output untuk mendapatkan nama branch
-    proc.eachLine { line ->
-        def match = (line =~ /refs\/heads\/(.+)/)
-        if (match) {
-            branches.add(match[0][1]) // Tambahkan nama branch
-        }
-    }
-    // Mengembalikan hasil sebagai string yang dipisahkan newline
-    return branches.join("\n")
 }
