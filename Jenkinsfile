@@ -16,16 +16,15 @@ pipeline {
     environment {
         GIT_CREDENTIALS = credentials('56886b6a-2044-4bea-8434-b13331da1fd9')
         DOCKER_IMAGE = 'wdio-cucumber_master:latest'
-        CUSTOM_WORKSPACE = 'C:/Users/Ahyar/Documents/jenkins_workspace'
     }
     stages {
         stage('Checkout') {
             steps {
                 script {
-                    deleteDir()
-                        git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
-                            credentialsId: env.GIT_CREDENTIALS, 
-                            branch: params.BRANCH
+                    echo "Checking out branch: ${params.BRANCH}"
+                    git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
+                        credentialsId: env.GIT_CREDENTIALS, 
+                        branch: params.BRANCH
                 }
             }
         }
@@ -56,8 +55,7 @@ pipeline {
                     """
                 } 
             } 
-} 
-
+        }
     }
     post {
         always {
