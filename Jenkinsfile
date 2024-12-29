@@ -46,7 +46,7 @@ pipeline {
                         '@SchoolFeature' : 'Fitur Sekolah'
                     ]
                     
-                    def cucumberTag = params.FEATURE_TAG ?: '@defaultTag'
+                    def cucumberTag = params.FEATURE_TAG ?: '@HotelFeature'
                     def featureDescription = FEATURE_DESCRIPTION_MAP[cucumberTag]
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
@@ -85,7 +85,8 @@ pipeline {
 
 def getBranches() {
     def branches = []
-    def proc = "git ls-remote --heads https://github.com/yaryaraldebaran/wdio-cucumber".execute()
+    def proc = bat(script: "git ls-remote --heads https://github.com/yaryaraldebaran/wdio-cucumber", returnStdout: true).trim()
+
     proc.text.eachLine { line ->
         def match = (line =~ /refs\/heads\/(.+)/)
         if (match) {
