@@ -21,33 +21,28 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    dir(env.CUSTOM_WORKSPACE) {
-                        deleteDir()
+                    deleteDir()
                         git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
                             credentialsId: env.GIT_CREDENTIALS, 
                             branch: 'development'
-                    }
                 }
             }
         }
         stage('Install Dependencies Locally') {
             steps {
                 script {
-                    dir(env.CUSTOM_WORKSPACE) {
-                        bat 'npm install'
-                    }
+                    bat 'npm install'
                 }
             }
         }
         stage('Run Tests') {
             steps {
                 script {
-                    dir(env.CUSTOM_WORKSPACE) {
-                                            def FEATURE_DESCRIPTION_MAP = [
-                        '@HotelFeature'  : 'Fitur Hotel',
-                        '@FlightFeature' : 'Fitur Tiket Pesawat',
-                        '@BusFeature'    : 'Fitur Bus',
-                        '@SchoolFeature' : 'Fitur Sekolah'
+                    def FEATURE_DESCRIPTION_MAP = [
+                    '@HotelFeature'  : 'Fitur Hotel',
+                    '@FlightFeature' : 'Fitur Tiket Pesawat',
+                    '@BusFeature'    : 'Fitur Bus',
+                    '@SchoolFeature' : 'Fitur Sekolah'
                     ]
                     
                     def cucumberTag = params.FEATURE_TAG ?: '@defaultTag'
