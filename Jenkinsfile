@@ -1,6 +1,7 @@
 pipeline {
     agent any
     parameters {
+        choice(name: 'BRANCH', choices: getBranches(), description: 'Pilih branch untuk dibuild')
         choice(
             name: 'FEATURE_TAG',
             choices: [
@@ -24,7 +25,7 @@ pipeline {
                     deleteDir()
                         git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
                             credentialsId: env.GIT_CREDENTIALS, 
-                            branch: 'development'
+                            branch: params.BRANCH
                 }
             }
         }
@@ -81,4 +82,15 @@ pipeline {
             }
         }
     }
+}
+def getBranches() {
+    def branches = []
+    def proc = "git ls-remote --heads https://github.com/yaryaraldebaran/wdio-cucumber".execute()
+    proc.text.eachLine { line ->
+        def match = (line =~ /refs\/heads\/(.+)/)
+        if (match) {
+            branches.add(match[0][1]) // Tambahkan nama branch
+        }
+    }
+    return branches.join("\n") // Return sebagai string yang dipisahkan newline
 }
