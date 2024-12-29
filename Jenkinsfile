@@ -21,6 +21,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
+                    deleteDir()
                     echo "Checking out branch: ${params.BRANCH}"
                     git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
                         credentialsId: env.GIT_CREDENTIALS, 
