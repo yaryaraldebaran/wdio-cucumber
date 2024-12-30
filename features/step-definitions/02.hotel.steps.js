@@ -219,6 +219,6 @@ When(/^User cancel the book$/, async () => {
   await (await hotelsPage.btnByText("Request for Cancellation")).click();
 });
 
-Given(/^User have booking cancellation$/, (cityName) => {
-  console.log(`cancellation in progress ${cityName}`)
+Given(/^User have booking cancellation$/, async(cityName) => {
+  await console.log(`cancellation in progress ${cityName}`)
 });
