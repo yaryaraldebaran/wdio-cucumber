@@ -1,19 +1,19 @@
 @HotelFeature
 Feature: Hotel Feature Travel PHP 
 
-  # @BookNoLogin
-  # Scenario: Book a hotel without login 
-  #   Given User have searched for hotels in "Dubai" without login
-  #   And User select card hotel "Howard Johnson Plaza by Wyndham Dubai Deira"
-  #   When User create hotel booking for "1" night and "Junior suite standard" type
-  #   And Non-Registered User continue finishing transaction
-  #   Then User have the transaction id
+  @BookNoLogin
+  Scenario: Book a hotel without login 
+    Given User have searched for hotels in "Dubai" without login
+    And User select card hotel "Howard Johnson Plaza by Wyndham Dubai Deira"
+    When User create hotel booking for "1" night and "Junior suite standard" type
+    And Non-Registered User continue finishing transaction
+    Then User have the transaction id
 
-  # Scenario Outline: Searching hotel 
-  #   Given User logged in as <username> with password <password>
-  #   And User open the "Hotels" menu
-  #   When User search city "Dubai"
-  #   Then User see "Dubai" city in result card
+  Scenario Outline: Searching hotel 
+    Given User logged in as <username> with password <password>
+    And User open the "Hotels" menu
+    When User search city "Dubai"
+    Then User see "Dubai" city in result card
 
   Scenario Outline: Book a hotel without changing any traveller option 
     Given User have searched for hotels in "Dubai"
