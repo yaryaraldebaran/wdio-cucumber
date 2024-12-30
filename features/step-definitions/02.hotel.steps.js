@@ -6,7 +6,7 @@ const utils = require("../../utils/utils");
 const Page = require("../pageobjects/page");
 const GlobalVariables = require('../../utils/globalVariables')
 const report = require('@wdio/allure-reporter')
-
+const HandleElement = require('../../utils/handleElement')
 const page = new Page(); 
 const pages = {
   login: LoginPage,
@@ -60,8 +60,10 @@ const verifyCityInSearchLocation = async (cityName) => {
 
 const selectDropdown = async (dropdown, option) => {
   const dropdownElement = await dropdown;
+  await HandleElement.scrollToElement(dropdownElement);
   await dropdownElement.click();
   const optionElement = await option;
+  await HandleElement.scrollToElement(optionElement)
   await optionElement.click();
 };
 const fillPersonalInformation = async () => {
@@ -108,8 +110,13 @@ const fillHotelBookingInformation = async (isRegistered = true) => {
   await report.addStep('now take TnC button')
   await utils.customTakeScreenshot();
   await hotelsPage.radioTnC.click()
+  const btnBookingConfirm = await hotelsPage.btnByText('Booking Confirm')
+  while (await btnBookingConfirm.isDisplayed() || await btnBookingConfirm.isClickable()) {
+    await btnBookingConfirm.click();
+    await browser.pause(500);  // Add a small wait to avoid excessive requests
+  }
+
   
-  await (await hotelsPage.btnByText('Booking Confirm')).click()
   await report.addStep('booking confirm')
   await browser.pause(15000)
   
@@ -117,11 +124,19 @@ const fillHotelBookingInformation = async (isRegistered = true) => {
 };
 
 const verifyTrxDetailAfterBooking=async ()=>{
-    await expect(await hotelsPage.txtTrxDetailStatusByLabel('Payment Status')).toHaveText('unpaid')
-    await expect(await hotelsPage.txtTrxDetailStatusByLabel('Booking Status')).toHaveText('pending')
-    var bookingReference =  await (await hotelsPage.txtBookingReference).getText()
-    await GlobalVariables.setVariable('bookingReference',bookingReference)
-    await console.log("global variable test :"+GlobalVariables.getVariable('bookingReference'))
+  const paymentStatus = await hotelsPage.txtTrxDetailStatusByLabel('Payment Status');
+  const bookingStatus = await hotelsPage.txtTrxDetailStatusByLabel('Booking Status');
+  
+  await paymentStatus.waitForDisplayed({ timeout: 10000 });
+  await expect(paymentStatus).toHaveText('unpaid');
+  
+
+  await bookingStatus.waitForDisplayed({ timeout: 10000 });
+  await expect(bookingStatus).toHaveText('pending');
+  
+  var bookingReference =  await (await hotelsPage.txtBookingReference).getText()
+  await GlobalVariables.setVariable('bookingReference',bookingReference)
+  await console.log("global variable test :"+GlobalVariables.getVariable('bookingReference'))
 }
 
 /**
@@ -144,7 +159,7 @@ Given(/^User have searched for hotels in "(.*)"$/, async (cityName) => {
   await LoginPage.login("user@phptravels.com", "demouser");
   const menuSelector = `//a[contains(text(), 'Hotels')]`;
   const menuElement = await $(menuSelector);
-  await menuElement.click();
+  await menuElement.doubleClick();
   await browser.pause(5000);
 
   await searchHotel(cityName);
@@ -158,13 +173,12 @@ When(/^User select card hotel "(.*)"$/, async (hotelName) => {
 When(/^User create hotel booking for "(.*)" night and "(.*)" type$/, async (night,roomType) => {
   const btnSelectRoom = await hotelsPage.btnSelectRoom;
   await btnSelectRoom.click();
+  await HandleElement.scrollToElement(await hotelsPage.dropdownOnDetail)
   await selectDropdown(
     await hotelsPage.dropdownOnDetail,
     await hotelsPage.optionByTextOnDetail(`${night} -`)
   );
-  // const btnBookNow = hotelsPage.btnBookNow;
-  //add select
-  await (await hotelsPage.btnBookByRoomType(roomType)).scrollIntoView();
+  await HandleElement.scrollToElement(await hotelsPage.btnBookByRoomType(roomType))
   await utils.customTakeScreenshot()
   await (await hotelsPage.btnBookByRoomType(roomType)).click();
 });
@@ -205,4 +219,6 @@ When(/^User cancel the book$/, async () => {
   await (await hotelsPage.btnByText("Request for Cancellation")).click();
 });
 
-Given(/^User have booking cancellation$/, async (cityName) => {});
+Given(/^User have booking cancellation$/, (cityName) => {
+  console.log(`cancellation in progress ${cityName}`)
+});

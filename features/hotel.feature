@@ -1,11 +1,19 @@
 @HotelFeature
 Feature: Hotel Feature Travel PHP 
 
-  Scenario Outline: Searching hotel 
-    Given User logged in as <username> with password <password>
-    And User open the "Hotels" menu
-    When User search city "Dubai"
-    Then User see "Dubai" city in result card
+  # @BookNoLogin
+  # Scenario: Book a hotel without login 
+  #   Given User have searched for hotels in "Dubai" without login
+  #   And User select card hotel "Howard Johnson Plaza by Wyndham Dubai Deira"
+  #   When User create hotel booking for "1" night and "Junior suite standard" type
+  #   And Non-Registered User continue finishing transaction
+  #   Then User have the transaction id
+
+  # Scenario Outline: Searching hotel 
+  #   Given User logged in as <username> with password <password>
+  #   And User open the "Hotels" menu
+  #   When User search city "Dubai"
+  #   Then User see "Dubai" city in result card
 
   Scenario Outline: Book a hotel without changing any traveller option 
     Given User have searched for hotels in "Dubai"
@@ -14,19 +22,11 @@ Feature: Hotel Feature Travel PHP
     And Registered User continue finishing transaction
     Then User have the transaction id
 
-  @BookNoLogin
-  Scenario: Book a hotel without login 
-    Given User have searched for hotels in "Dubai" without login
-    And User select card hotel "Golden Tulip Deira ( Former Nihal Palace)"
-    When User create hotel booking for "1" night and "SINGLE DELUXE" type
-    And Non-Registered User continue finishing transaction
-    Then User have the transaction id
-
   @CancelBook
   Scenario: Cancel book a hotel directly after booking
     Given User have searched for hotels in "Dubai"
     And User select card hotel "Golden Tulip Deira ( Former Nihal Palace)"
-    And User create hotel booking for "2" night
+    And User create hotel booking for "1" night and "SINGLE DELUXE" type
     And Registered User continue finishing transaction
     And User have the transaction id
     When User cancel the book

@@ -1,5 +1,9 @@
 const { addAttachment } = require('@wdio/allure-reporter');
 const utils = require('./utils/utils');
+const Page = require('./features/pageobjects/page')
+const page = new Page(); 
+
+
 exports.config = {
   //
   // ====================
@@ -54,10 +58,16 @@ exports.config = {
     {
       browserName: "firefox"
       ,'moz:firefoxOptions': {
-        args: ['-headless']} 
+        prefs: {
+          'network.cookie.lifetimePolicy': 2, // session cookies only
+          'browser.cache.disk.enable': false,
+          'browser.cache.memory.enable': false,
+          'privacy.clearOnShutdown.cookies': true,
+          'privacy.clearOnShutdown.cache': true,
+          'privacy.clearOnShutdown.history': true
+        },
+        args: ['-headless','--no-remote']} 
     
-
-
     },
   ],
 
@@ -167,7 +177,7 @@ exports.config = {
     // <boolean> hide source uris
     source: true,
     // <boolean> fail if there are any undefined or pending steps
-    strict: false,
+    strict: true,
     // <string> (expression) only execute the features or scenarios with tags matching the expression
     tagExpression: "",
     // <number> timeout for step definitions
@@ -252,8 +262,12 @@ exports.config = {
    * @param {ITestCaseHookParameter} world    world object containing information on pickle and test step
    * @param {object}                 context  Cucumber World object
    */
-  // beforeScenario: function (world, context) {
-  // },
+
+  beforeScenario: async function (world) {
+    console.log('========= BEFORE SCENARIO START =========');
+    console.log(`Running scenario: ${world.pickle.name}`);
+    console.log('========= BEFORE SCENARIO ENDS =========');
+},
   /**
    *
    * Runs before a Cucumber Step.
@@ -261,8 +275,9 @@ exports.config = {
    * @param {IPickle}            scenario scenario pickle
    * @param {object}             context  Cucumber World object
    */
-  // beforeStep: function (step, scenario, context) {
-  // },
+  beforeStep: function (step, scenario, context) {
+    console.log(`Start Step: ${step.keyword} ${step.text}`);
+  },
   /**
    *
    * Runs after a Cucumber Step.
@@ -274,8 +289,9 @@ exports.config = {
    * @param {number}             result.duration  duration of scenario in milliseconds
    * @param {object}             context          Cucumber World object
    */
-  // afterStep: function (step, scenario, result, context) {
-  // },
+  afterStep: function (step, scenario, result, context) {
+    console.log(`After Step: ${step.keyword} ${step.text}`);
+  },
   /**
    *
    * Runs after a Cucumber Scenario.
@@ -288,13 +304,23 @@ exports.config = {
    */
   //after scenario harus ditempatkan disini
   afterScenario: async function (world, result, context) {
+    console.log('========= AFTER SCENARIO START =========');
+
     if (!result.passed) {
-        await browser.debug()
         console.log("Scenario failed. Capturing screenshot...");
-        await utils.customTakeScreenshot(); // Panggil fungsi custom
+        await browser.debug()
+        await utils.customTakeScreenshot(); // Call custom screenshot function
+    }else {
+      console.log(`SCENARIO -> ${world.pickle.name} PASSED`)
     }
+    await page.open('logout')
+    const logoutSuccess = $(`//h4[text()='Logout Successful']`)
+    await logoutSuccess.waitForDisplayed({ timeout: 5000 })
+    console.log(`Finished scenario: ${world.pickle.name}`);
+    console.log('========= AFTER SCENARIO END =========');
 }
 ,
+
   /**
    *
    * Runs after a Cucumber Feature.
