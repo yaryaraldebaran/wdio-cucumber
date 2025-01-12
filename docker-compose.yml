@@ -10,7 +10,7 @@ services:
       - ~/.npm:/root/.npm
     environment:
       - DISPLAY=:99
-      - FEATURE_TAG=${FEATURE_TAG:-@HotelFeature} # Default value for FEATURE_TAG
+      - FEATURE_TAG=${FEATURE_TAG:-@HotelFeature} 
     working_dir: /app
     command: >
       sh -c "

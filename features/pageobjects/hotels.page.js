@@ -82,7 +82,7 @@ class HotelsPage extends Page{
     * @returns {import('webdriverio').Element}
     */
     async btnBookByRoomType(text){
-        return $(`(//div[./div/h3[text()='${text}']]/following-sibling::div[@class='roomGrid']/div/div/form/button[./strong])[1]`)
+        return $(`//div[./h5/strong[text()='${text}']]/descendant::button[./strong][1]`)
     }
     async inputPersonalInfoByLabelDynamic(text){
         return $(`//input[following-sibling::label[normalize-space(text())='${text}'] and ancestor::div/div/h3[normalize-space(text())='Personal Information']]`)
