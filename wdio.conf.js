@@ -66,7 +66,10 @@ exports.config = {
           'privacy.clearOnShutdown.cache': true,
           'privacy.clearOnShutdown.history': true
         },
-        args: ['-headless','--no-remote']} 
+        args: [
+          '-headless',
+          '--no-remote'
+        ]} 
     
     },
   ],
@@ -78,7 +81,7 @@ exports.config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: "info",
+  logLevel: "warn",
   //
   // Set specific log levels per logger
   // loggers:
@@ -150,7 +153,7 @@ exports.config = {
       {
         outputDir: "allure-results",
         disableWebdriverStepsReporting: true, // Disable logging WebdriverIO commands
-        disableWebdriverScreenshotsReporting: true, // Include screenshots in the report
+        disableWebdriverScreenshotsReporting: false, // Include screenshots in the report
       },
     ],
   ],
@@ -308,14 +311,21 @@ exports.config = {
 
     if (!result.passed) {
         console.log("Scenario failed. Capturing screenshot...");
-        await browser.debug()
-        await utils.customTakeScreenshot(); // Call custom screenshot function
+        // await browser.debug()
+        await utils.takeScreenshot(); // Call custom screenshot function
     }else {
       console.log(`SCENARIO -> ${world.pickle.name} PASSED`)
     }
     await page.open('logout')
     const logoutSuccess = $(`//h4[text()='Logout Successful']`)
     await logoutSuccess.waitForDisplayed({ timeout: 5000 })
+    await browser.url('https://phptravels.net/');
+    await browser.waitUntil(
+        async () => (await browser.execute(() => document.readyState)) === 'complete',
+        { timeout: 10000, timeoutMsg: 'Page did not load completely' }
+    );
+    await expect(browser).toHaveUrl('https://phptravels.net/');
+    console.log("Logout Success!");
     console.log(`Finished scenario: ${world.pickle.name}`);
     console.log('========= AFTER SCENARIO END =========');
 }
