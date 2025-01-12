@@ -153,7 +153,7 @@ exports.config = {
       {
         outputDir: "allure-results",
         disableWebdriverStepsReporting: true, // Disable logging WebdriverIO commands
-        disableWebdriverScreenshotsReporting: false, // Include screenshots in the report
+        disableWebdriverScreenshotsReporting: true, // Include screenshots in the report
       },
     ],
   ],

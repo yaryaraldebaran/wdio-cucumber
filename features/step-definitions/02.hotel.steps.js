@@ -11,28 +11,28 @@ const page = new Page();
 const pages = {
   login: LoginPage,
 };
-// const hotelsPage = new HotelsPage()
+
 const searchHotel = async (cityName) => {
   console.log("Now search hotel");
 
   await browser.pause(4000);
-  // const searchSelect = hotelsPage.searchSelector
+
   await hotelsPage.searchSelector.click();
 
-  // const searchField = hotelsPage.searchField
+
   await hotelsPage.searchField.setValue(cityName);
-  await utils.takeScreenshot("Searching hotel");
+  await utils.takeScreenshot("Searching hotel with city filter");
   await browser.pause(2000);
 
-  // const firstResult = hotelsPage.firstResult
+
   await hotelsPage.firstResult.click();
+  await report.addStep("Click first result city")
   await hotelsPage.buttonSearch.click();
   await browser.pause(10000);
-  await utils.takeScreenshot("Hotel's detail opened");
+  await utils.takeScreenshot("Hotel's search page displayed");
 };
 const selectHotel = async (hotelName) => {
-  // const txtGetApp = await $("//strong[normalize-space()='Get The App!']")
-  // await txtGetApp.scrollIntoView()
+
   const btnHide = await $("//button[text()='Hide']");
   if ((await btnHide.isExisting()) && (await btnHide.isDisplayed())) {
     await btnHide.click();

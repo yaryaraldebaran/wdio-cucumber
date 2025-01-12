@@ -32,33 +32,32 @@ class Utils {
    */
   async takeScreenshot(param = null) {
     const screenshotName = this.getScreenshotName(param);
-
+  
     // Define the screenshot path
     const screenshotPath = path.join(
       process.cwd(),
       "screenshots",
       screenshotName
     );
-
+  
     // Ensure the directory exists
     if (!fs.existsSync(path.dirname(screenshotPath))) {
       fs.mkdirSync(path.dirname(screenshotPath), { recursive: true });
     }
-
+  
     // Capture the screenshot using browser.saveScreenshot
     await browser.saveScreenshot(screenshotPath);
-
+  
     // Read the screenshot file
     const screenshotData = fs.readFileSync(screenshotPath);
-
-    report.startStep(screenshotName, {}, 'passed');
-    report.addAttachment(screenshotName, screenshotData, 'image/png');
-    report.endStep()
-
-    // report.step(screenshotName,()=>{
-    //   report.addAttachment(screenshotName, screenshotData, "image/png");
-    // })
+  
+    // Add a nested step with the screenshot attached
+    report.startStep(`Step: ${screenshotName}`);
+    report.addAttachment("Screenshot", screenshotData, "image/png");
+    report.endStep();
   }
+  
+  
 
   /**
    * define selectors using getter methods
