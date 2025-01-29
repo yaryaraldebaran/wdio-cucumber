@@ -1,5 +1,6 @@
 const Page = require("./page");
-
+const utils = require("../../utils/utils");
+const report = require("@wdio/allure-reporter");
 class HotelsPage extends Page{
 
     constructor() {
@@ -10,12 +11,12 @@ class HotelsPage extends Page{
      * @returns {import('webdriverio').Element}
     */
     get searchSelector() {
-        return $(`//span[@aria-labelledby='select2-hotels_city-container']`)
+        return $(`(//span[contains(@class,'select2')])[1]`)
     } 
     /**
      * @returns {import('webdriverio').Element}
     */
-    get searchField()  {return  $(`//input[@type='search']`)}
+    get searchField()  {return  $(`//input[@type='search' and contains(@class,'select2')]`)}
     
     /**
      * @returns {import('webdriverio').Element}
@@ -32,7 +33,7 @@ class HotelsPage extends Page{
     */
 
     get buttonSearch(){
-        return $(`//button[@type='submit']`)
+        return $(`(//button[@type='submit' and contains(@class, 'search_button')])[2]`)
     }
 
     /**
@@ -123,6 +124,125 @@ class HotelsPage extends Page{
         return $(`//input[@id='agreechb']`)
     }
 
+
+
+    /*comment method 
+    */
+    async searchHotel(cityName) {
+        console.log("Now searching hotel");
+
+        await browser.pause(4000);
+        await this.searchSelector.click();
+        await this.searchField.setValue(cityName);
+        await utils.takeScreenshot("Searching hotel with city filter");
+        await browser.pause(2000);
+        await this.firstResult.click();
+        await report.addStep("Click first result city");
+        await this.buttonSearch.waitForDisplayed({ timeout: 5000 });
+        await this.buttonSearch.click();
+        await browser.pause(10000);
+        await utils.takeScreenshot("Hotel's search page displayed");
+    }
+
+    async selectHotel(hotelName) {
+        const btnHide = await $("//button[text()='Hide']");
+        if ((await btnHide.isExisting()) && (await btnHide.isDisplayed())) {
+            await btnHide.click();
+        }
+
+        const btnView = await this.btnViewByHotelName(hotelName);
+        await btnView.waitForDisplayed({
+            timeout: 5000,
+            timeoutMsg: "Element not displayed",
+        });
+        await HandleElement.scrollToElement(btnView);
+        await btnView.click();
+
+        const hotelNameInDetail = await this.txtHotelNameinDetail.getText();
+        await expect(hotelNameInDetail).toEqual(hotelName);
+        await utils.takeScreenshot("Hotel name in detail is equal");
+    }
+
+    async verifyCityInSearchLocation(cityName) {
+        const cityNameOnCard = await this.txtHotelLocation(cityName);
+        for (const element of cityNameOnCard) {
+            expect(await element.isDisplayed()).toBe(true);
+        }
+        await utils.takeScreenshot();
+    }
+
+    async selectDropdown(dropdown, option) {
+        const dropdownElement = await dropdown;
+        await HandleElement.scrollToElement(dropdownElement);
+        await dropdownElement.click();
+        const optionElement = await option;
+        await HandleElement.scrollToElement(optionElement);
+        await optionElement.click();
+    }
+
+    async fillPersonalInformation() {
+        await (await this.inputPersonalInfoByLabelDynamic("First Name")).setValue("John");
+        await (await this.inputPersonalInfoByLabelDynamic("Last Name")).setValue("Doe");
+        await (await this.inputPersonalInfoByLabelDynamic("Email")).setValue("john@doe.com");
+        await (await this.inputPersonalInfoByLabelDynamic("Address")).setValue("John Doe Address");
+        await (await this.inputPersonalInfoByLabelDynamic("Phone")).setValue("088888888");
+        await utils.takeScreenshot();
+    }
+
+    async fillTravellersInformation() {
+        const elements = await this.counterTraveller;
+
+        for (let i = 0; i < elements.length; i++) {
+            await this.selectDropdown(
+                await this.dropdownTravellerTitlebyOrder(i + 1),
+                await this.optionByTextOnDetail("Mr")
+            );
+            await (await this.inputTravellerFirstNamebyOrder(i + 1)).setValue("John");
+            await (await this.inputTravellerLastNamebyOrder(i + 1)).setValue("Doe");
+        }
+
+        await report.addStep("Input traveller is finished");
+    }
+
+    async fillHotelBookingInformation(isRegistered = true) {
+        if (!isRegistered) {
+            await this.fillPersonalInformation();
+            await utils.takeScreenshot();
+        }
+        await this.fillTravellersInformation();
+        await report.addStep("Now go to TnC");
+        await utils.takeScreenshot();
+        await this.radioTnC.scrollIntoView();
+        await report.addStep("Now take TnC button");
+        await utils.takeScreenshot();
+        await this.radioTnC.click();
+        const btnBookingConfirm = await this.btnByText("Booking Confirm");
+        while (
+            (await btnBookingConfirm.isDisplayed()) ||
+            (await btnBookingConfirm.isClickable())
+        ) {
+            await btnBookingConfirm.click();
+            await browser.pause(500);
+        }
+
+        await report.addStep("Booking confirmed");
+        await browser.pause(15000);
+    }
+
+    async verifyTrxDetailAfterBooking() {
+        const paymentStatus = await this.txtTrxDetailStatusByLabel("Payment Status");
+        const bookingStatus = await this.txtTrxDetailStatusByLabel("Booking Status");
+
+        await paymentStatus.waitForDisplayed({ timeout: 10000 });
+        await expect(paymentStatus).toHaveText("unpaid");
+
+        await bookingStatus.waitForDisplayed({ timeout: 10000 });
+        await expect(bookingStatus).toHaveText("pending");
+
+        const bookingReference = await this.txtBookingReference.getText();
+        await GlobalVariables.setVariable("bookingReference", bookingReference);
+        console.log("Global variable test: " + GlobalVariables.getVariable("bookingReference"));
+    }
 }
 
 module.exports = new HotelsPage(); 

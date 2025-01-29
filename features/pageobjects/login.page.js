@@ -20,6 +20,10 @@ class LoginPage extends Page {
     return $("//button[@id = 'submitBTN']");
   }
 
+  get btnLogo(){
+    return $(`//header/div/div/a[contains(@class,'fadeout')]`)
+  }
+
   /**
    * a method to encapsule automation code to interact with the page
    * e.g. to login using username and password
@@ -35,6 +39,15 @@ class LoginPage extends Page {
     await this.inputUsername.setValue(username);
     await this.inputPassword.setValue(password);
     await this.btnSubmit.click();
+  }
+  async selectMenu(menuName){
+    await this.btnLogo.click()
+    // Locate the menu item by its name (menuName) and perform the click action
+    const menuSelector = `//button[./span[text()='${menuName}']]`; 
+    const menuElement = await $(menuSelector);
+    await menuElement.click();
+    await browser.pause(5000)
+
   }
 
   /**
