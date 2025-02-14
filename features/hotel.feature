@@ -1,7 +1,7 @@
 @HotelFeature
 Feature: Hotel Feature Travel PHP 
 
-  # @BookNoLogin
+  @BookNoLogin
   # Scenario: Book a hotel without login 
   #   Given User have searched for hotels in "Dubai" without login
   #   And User select card hotel "Grand Excelsior Deira Hotel"
@@ -32,7 +32,7 @@ Feature: Hotel Feature Travel PHP
   #   When User cancel the book
 
 
-  #   Examples:
-  #     | username | password             | message                        |
-  #     |  user@phptravels.com | demouser | You logged into a secure area! |
+    Examples:
+      | username | password             | message                        |
+      |  user@phptravels.com | demouser | You logged into a secure area! |
  

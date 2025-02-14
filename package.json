@@ -23,6 +23,7 @@
     "wdio-wait-for": "^3.0.11"
   },
   "dependencies": {
-    "@wdio/logger": "^9.1.3"
+    "@wdio/logger": "^9.1.3",
+    "sharp": "^0.33.5"
   }
 }

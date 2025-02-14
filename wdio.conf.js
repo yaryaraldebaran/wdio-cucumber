@@ -67,7 +67,7 @@ exports.config = {
           'privacy.clearOnShutdown.history': true
         },
         args: [
-          '-headless',
+          // '-headless',
           '--no-remote'
         ]} 
     
@@ -337,8 +337,8 @@ exports.config = {
    * @param {string}                   uri      path to feature file
    * @param {GherkinDocument.IFeature} feature  Cucumber feature object
    */
-  // afterFeature: function (uri, feature) {
-  // },
+  afterFeature: function (uri, feature) {
+  },
 
   /**
    * Runs after a WebdriverIO command gets executed
@@ -374,8 +374,8 @@ exports.config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  // onComplete: function(exitCode, config, capabilities, results) {
-  // },
+  onComplete: function(exitCode, config, capabilities, results) {
+  },
   /**
    * Gets executed when a refresh happens.
    * @param {string} oldSessionId session ID of the old session

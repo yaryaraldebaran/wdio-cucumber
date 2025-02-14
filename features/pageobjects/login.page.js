@@ -1,6 +1,7 @@
-const { $ } = require("@wdio/globals");
+const { $, browser } = require("@wdio/globals");
 const Page = require("./page");
-
+const utils = require("../../utils/utils");
+const allure = require("@wdio/allure-reporter");
 /**
  * sub page containing specific selectors and methods for a specific page
  */
@@ -24,6 +25,12 @@ class LoginPage extends Page {
     return $(`//header/div/div/a[contains(@class,'fadeout')]`)
   }
 
+  async selectMenuName(text) {
+    return $(`//button[./span[text()='${text}']]`);
+
+  }
+
+
   /**
    * a method to encapsule automation code to interact with the page
    * e.g. to login using username and password
@@ -41,10 +48,16 @@ class LoginPage extends Page {
     await this.btnSubmit.click();
   }
   async selectMenu(menuName){
+    
+    await allure.addStep(`Select menu ${menuName}`);
+    console.log(`Select menu ${menuName}`)
+    await this.btnLogo.waitForExist({ timeout: 10000 });
     await this.btnLogo.click()
-    // Locate the menu item by its name (menuName) and perform the click action
-    const menuSelector = `//button[./span[text()='${menuName}']]`; 
-    const menuElement = await $(menuSelector);
+    await this.selectMenu(menuName)
+    await this.selectMenu.waitForExist({ timeout: 5000 });
+    await this.selectMenu.waitForDisplayed({ timeout: 5000 });
+    console.log(`button menu ${menuName} appears`)
+    await utils.takeScreenshotWithHighlight(menuElement.$,"highlighted_menu");
     await menuElement.click();
     await browser.pause(5000)
 

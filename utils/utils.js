@@ -4,6 +4,7 @@ const report = require("@wdio/allure-reporter");
 const { addAttachment } = require("@wdio/allure-reporter");
 const fs = require("fs");
 const path = require("path");
+const sharp = require("sharp");
 
 /**
  * sub page containing specific selectors and methods for a specific page
@@ -30,7 +31,7 @@ class Utils {
    * Capture a screenshot and attach it to the Allure report.
    * @param {string|null} name - Custom name for the screenshot. If null, a name will be generated.
    */
-  async takeScreenshot(param = null) {
+  async takeScreenshot(element=null,param = null) {
     const screenshotName = this.getScreenshotName(param);
   
     // Define the screenshot path
@@ -47,7 +48,6 @@ class Utils {
   
     // Capture the screenshot using browser.saveScreenshot
     await browser.saveScreenshot(screenshotPath);
-  
     // Read the screenshot file
     const screenshotData = fs.readFileSync(screenshotPath);
   
@@ -66,14 +66,52 @@ class Utils {
     return $("#flash");
   }
 
-  // Fungsi untuk mengambil screenshot manual
-  async customTakeScreenshot() {
-    const screenshot = await browser.takeScreenshot();
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-"); // Ganti karakter tidak valid
-    const fileName = `Screenshot_${timestamp}.png`;
+  async takeScreenshotWithHighlight(element = null, param = "screenshot") {
+    if (!element) {
+      throw new Error("Element is required for highlighting in screenshot");
+    }
 
-    // Tambahkan ke laporan Allure
-    addAttachment(fileName, Buffer.from(screenshot, "base64"), "image/png");
+    // Wait for the element to be present and visible
+    await element.waitForExist({ timeout: 5000 });
+    await element.waitForDisplayed({ timeout: 5000 });
+
+    // Get element's position and size
+    const { x, y } = await element.getLocation();
+    const { width, height } = await element.getSize();
+
+    // Define screenshot paths
+    const screenshotName = `${param}.png`;
+    const screenshotsDir = path.join(process.cwd(), "screenshots");
+    const screenshotPath = path.join(screenshotsDir, screenshotName);
+    const highlightedPath = path.join(screenshotsDir, `highlighted_${screenshotName}`);
+
+    if (!fs.existsSync(screenshotsDir)) {
+      fs.mkdirSync(screenshotsDir, { recursive: true });
+    }
+
+    // Capture screenshot
+    await browser.saveScreenshot(screenshotPath);
+
+    // Process with Sharp
+    const image = sharp(screenshotPath);
+    const metadata = await image.metadata();
+
+    // Draw red rectangle overlay
+    const overlay = Buffer.from(`
+      <svg width="${metadata.width}" height="${metadata.height}">
+        <rect x="${x}" y="${y}" width="${width}" height="${height}" 
+              fill="none" stroke="red" stroke-width="4"/>
+      </svg>
+    `);
+
+    // Apply overlay and save
+    await image.composite([{ input: overlay, top: 0, left: 0 }]).toFile(highlightedPath);
+
+    // Convert final image to Base64
+    const finalScreenshotBase64 = fs.readFileSync(highlightedPath).toString("base64");
+
+    // Attach screenshot to Allure (DO NOT use startStep/endStep)
+    report.addAttachment("Highlighted Screenshot", Buffer.from(finalScreenshotBase64, "base64"), "image/png");
   }
 
   /**

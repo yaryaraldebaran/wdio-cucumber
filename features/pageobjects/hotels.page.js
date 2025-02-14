@@ -132,6 +132,7 @@ class HotelsPage extends Page{
         console.log("Now searching hotel");
 
         await browser.pause(4000);
+        await this.searchSelector.waitForDisplayed({ timeout: 10000 });
         await this.searchSelector.click();
         await this.searchField.setValue(cityName);
         await utils.takeScreenshot("Searching hotel with city filter");

@@ -23,7 +23,7 @@ Then(/^User open the "(.*)" menu$/, async (menuName) => {
 
 Given(/^User logged in as (.+) with password (.+)$/,async(username,password)=>{
     await pages['login'].open()
-    await LoginPage.login(username, password);  
+    await LoginPage.login(username, password);
 })
 
 Given(/^User is on the dashboard page$/,async()=>{
