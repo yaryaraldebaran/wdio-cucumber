@@ -68,7 +68,7 @@ exports.config = {
         },
         args: [
           // '-headless',
-          '--no-remote'
+          '--no-remote',
         ]} 
     
     },
@@ -154,6 +154,7 @@ exports.config = {
         outputDir: "allure-results",
         disableWebdriverStepsReporting: true, // Disable logging WebdriverIO commands
         disableWebdriverScreenshotsReporting: true, // Include screenshots in the report
+        useCucumberStepReporter: true
       },
     ],
   ],
