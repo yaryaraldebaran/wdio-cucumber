@@ -12,7 +12,7 @@ services:
     volumes:
       - ..:/app
     working_dir: /app
-    command: ["sh", "-c", "ls -l /app && npx wdio /app/wdio.conf.ts"]
+    command: ["sh", "-c", "npm install && npx wdio /app/wdio.conf.ts"]
 
 networks:
   docker_default:

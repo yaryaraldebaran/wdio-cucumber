@@ -4,9 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+# RUN npm install
 
 COPY . .
-COPY wdio.conf.ts /app/wdio.conf.ts
 # Run WebdriverIO tests
 CMD ["npx", "wdio", "wdio.conf.ts"]
