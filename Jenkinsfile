@@ -14,7 +14,7 @@ pipeline {
         )
     }
     environment {
-        GIT_CREDENTIALS = credentials('github-yar')
+        GIT_CREDENTIALS = 'github-yar'
         DOCKER_IMAGE = 'docker-wdio'
     }
     stages {
