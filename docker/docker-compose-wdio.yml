@@ -8,9 +8,11 @@ services:
       - docker_default  # Connect to the same network as Selenium Grid
     environment:
       - WDIO_BASE_URL=http://selenium-hub:4444
+      - CUCUMBER_TAGS=${CUCUMBER_TAGS}
     volumes:
       - ..:/app
-    command: ["npx", "wdio", "run", "wdio.conf.js"]
+    working_dir: /app
+    command: ["npx", "wdio", "wdio.conf.ts"]
 
 networks:
   docker_default:
