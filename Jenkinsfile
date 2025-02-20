@@ -50,7 +50,7 @@ pipeline {
                     def featureDescription = FEATURE_DESCRIPTION_MAP[cucumberTag]
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
-                    bat """
+                    sh"""
                     CUCUMBER_TAGS=${cucumberTag} docker compose \
                     -f ./docker/docker-compose-wdio.yml up
                     """
@@ -62,7 +62,7 @@ pipeline {
         always {
             script {
                 echo 'Cleaning up Docker Compose resources...'
-                bat 'docker-compose -f ./docker/docker-compose-wdio.yml down'
+                sh 'docker-compose -f ./docker/docker-compose-wdio.yml down'
             }
         }
         // success {
