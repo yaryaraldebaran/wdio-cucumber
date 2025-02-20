@@ -4,8 +4,9 @@ import Page from './features/pageobjects/page';
 import {browser} from '@wdio/globals'
 import type { Options } from '@wdio/types';
 import {$,expect} from '@wdio/globals'
-import type { Pickle, HookFunctionExtension,StepResult } from '@wdio/cucumber-framework';
+
 import { PickleStep,Results,TestResult } from '@wdio/types/build/Frameworks';
+import chalk from 'chalk';
 
 const page = new Page();
 
@@ -26,19 +27,6 @@ export const config: WebdriverIO.Config = {
             args:['--disable-gpu','--disable-dev-shm-usage']
         }
     }, 
-    // {
-    //   browserName: "chrome",
-    //   'goog:chromeOptions': {
-    //     args: [
-    //       '--no-sandbox',
-    //       '--disable-infobars',
-    //       '--headless',
-    //       '--disable-gpu',
-    //       '--window-size=1440,735'
-    //     ]
-    //   }
-    // }
-
   ],
 
   logLevel: "warn",
@@ -75,32 +63,34 @@ export const config: WebdriverIO.Config = {
     snippets: true,
     source: true,
     strict: true,
-    tagExpression: "",
+    tags
+    : process.env.CUCUMBER_TAGS || '@LoginTest',
     timeout: 60000,
     ignoreUndefinedDefinitions: false,
   },
 
-  beforeScenario: async function (world: Pickle) {
+  beforeScenario: async function (world) {
     console.log('========= BEFORE SCENARIO START =========');
-    console.log(`Running scenario: ${world.name}`);
+    console.log(`Running scenario: ${world.pickle.name}`);
     console.log('========= BEFORE SCENARIO END =========');
   },
 
-  beforeStep: function (step: PickleStep, scenario: Pickle, context: Object): void {
-    console.log(`Start Step: ${step.keyword} ${step.text}`);
+  beforeStep: function (step, scenario){
+    console.log(`Start Step: ${step.text}`);
   },
-  afterStep: function (step: PickleStep, scenario: Pickle, result:StepResult) {
-    console.log(`After Step: ${step.keyword} ${step.text}`);
+  
+  afterStep: function (step, scenario) {
+    console.log(`After Step: ${step.text}`);
   },
 
-  afterScenario: async function (world: Pickle, result: { passed: boolean }) {
+  afterScenario: async function (scenario, result: { passed: boolean }) {
     console.log('========= AFTER SCENARIO START =========');
 
     if (!result.passed) {
       console.log("Scenario failed. Capturing screenshot...");
       await utils.takeScreenshot();
     } else {
-      console.log(`SCENARIO -> ${world.name} PASSED`);
+      console.log(chalk.bgGreenBright(`SCENARIO -> ${scenario.pickle.name} PASSED`));
     }
 
     await page.open('logout');
@@ -115,8 +105,8 @@ export const config: WebdriverIO.Config = {
     );
 
     await expect(browser).toHaveUrl('https://phptravels.net/');
-    console.log("Logout Success!");
-    console.log(`Finished scenario: ${world.name}`);
+    console.log(chalk.bgBlue("Logout Success!"));
+    console.log(`Finished scenario: ${scenario.pickle.name}`);
     console.log('========= AFTER SCENARIO END =========');
   }
 };

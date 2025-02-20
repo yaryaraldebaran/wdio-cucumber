@@ -224,12 +224,14 @@ export default class HotelsPage extends Page{
     }
 
     async verifyTrxDetailAfterBooking(){
-        const paymentStatus:ChainablePromiseElement = await this.txtTrxDetailStatusByLabel("Payment Status");
-        const bookingStatus:ChainablePromiseElement = await this.txtTrxDetailStatusByLabel("Booking Status");
+        const paymentStatus = await this.txtTrxDetailStatusByLabel("Payment Status");
+        const bookingStatus = await this.txtTrxDetailStatusByLabel("Booking Status");
 
         await paymentStatus.waitForDisplayed({ timeout: 10000 });
         assert((await paymentStatus.getText()).includes("unpaid"));
-        
+
+        await utils.takeScreenshotWithHighlight(paymentStatus,"payment status")
+        await utils.takeScreenshotWithHighlight(bookingStatus,"payment status")
         
 
         await bookingStatus.waitForDisplayed({ timeout: 10000 });
@@ -237,7 +239,8 @@ export default class HotelsPage extends Page{
 
         const bookingReference = await this.txtBookingReference.getText();
         await GlobalVariables.setVariable("bookingReference", bookingReference);
-        console.log("Global variable test: " + GlobalVariables.getVariable("bookingReference"));
+        await report.addStep(`Global variable test: ${GlobalVariables.getVariable("bookingReference")}`)
+        // console.log("Global variable test: " + );
     }
 }
 

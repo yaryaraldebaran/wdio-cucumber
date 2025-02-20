@@ -28,11 +28,8 @@ Then(/^User see \"(.*)\" city in result card$/, async (cityName: string) => {
 });
 
 Given(/^User have searched for hotels in \"(.*)\"$/, async (cityName: string) => {
-  await pages["login"].open("");
   await LoginPage.login("user@phptravels.com", "demouser");
-  const menuSelector = "//a[contains(text(), 'Hotels')]";
-  const menuElement = await $(menuSelector);
-  await menuElement.doubleClick();
+  await LoginPage.selectMenu("Hotels");
   await browser.pause(5000);
   await hotelsPage.searchHotel(cityName);
   await hotelsPage.verifyCityInSearchLocation(cityName);

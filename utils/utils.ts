@@ -4,10 +4,10 @@ import report, { addAttachment } from "@wdio/allure-reporter";
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
-import {browser} from "@wdio/globals"
+import { browser } from "@wdio/globals"
 
 class Utils {
-  getScreenshotName(name: string | null = null): string {
+  private getScreenshotName(name: string | null = null): string {
     if (!name || name.trim() === "") {
       const now = new Date();
       const formattedDate = now.toISOString().replace(/[-:.]/g, "").slice(0, 15);
@@ -19,14 +19,14 @@ class Utils {
   async takeScreenshot(element: WebdriverIO.Element | null = null, param: string | null = null): Promise<void> {
     const screenshotName = this.getScreenshotName(param);
     const screenshotPath = path.join(process.cwd(), "screenshots", screenshotName);
-    
+
     if (!fs.existsSync(path.dirname(screenshotPath))) {
       fs.mkdirSync(path.dirname(screenshotPath), { recursive: true });
     }
-    
+
     await browser.saveScreenshot(screenshotPath);
     const screenshotData = fs.readFileSync(screenshotPath);
-    
+
     report.startStep(`Step: ${screenshotName}`);
     report.addAttachment("Screenshot", screenshotData, "image/png");
     report.endStep();
@@ -36,17 +36,23 @@ class Utils {
     return $("#flash");
   }
 
-  async takeScreenshotWithHighlight(element: WebdriverIO.Element, param: string = "screenshot"): Promise<void> {
-    if (!element) {
+  async takeScreenshotWithHighlight(element: WebdriverIO.Element | ChainablePromiseElement, param: string = "screenshot"): Promise<void> {
+    const resolvedElement: WebdriverIO.Element = await element;
+
+    if (!resolvedElement) {
       throw new Error("Element is required for highlighting in screenshot");
     }
 
-    await element.waitForExist({ timeout: 5000 });
-    await element.waitForDisplayed({ timeout: 5000 });
-    
-    const { x, y } = await element.getLocation();
-    const { width, height } = await element.getSize();
-    
+    await resolvedElement.waitForExist({ timeout: 5000 });
+    await resolvedElement.waitForDisplayed({ timeout: 5000 });
+
+    const { x, y } = await resolvedElement.getLocation();
+    const { width, height } = await resolvedElement.getSize();
+
+    await resolvedElement.waitForExist({ timeout: 5000 });
+    await resolvedElement.waitForDisplayed({ timeout: 5000 });
+
+
     const screenshotName = `${param}.png`;
     const screenshotsDir = path.join(process.cwd(), "screenshots");
     const screenshotPath = path.join(screenshotsDir, screenshotName);
@@ -70,8 +76,10 @@ class Utils {
 
     await image.composite([{ input: overlay, top: 0, left: 0 }]).toFile(highlightedPath);
     const finalScreenshotBase64 = fs.readFileSync(highlightedPath).toString("base64");
-    
+
+    report.startStep(`Step: ${screenshotName}`);
     report.addAttachment("Highlighted Screenshot", Buffer.from(finalScreenshotBase64, "base64"), "image/png");
+    report.endStep();
   }
 
   async waitForPageLoaded(timeout: number = 120000): Promise<void> {
