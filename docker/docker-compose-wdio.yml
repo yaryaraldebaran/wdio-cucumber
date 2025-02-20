@@ -1,0 +1,17 @@
+services:
+  wdio:
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile-wdio
+    container_name: wdio-tests
+    networks:
+      - docker_default  # Connect to the same network as Selenium Grid
+    environment:
+      - WDIO_BASE_URL=http://selenium-hub:4444
+    volumes:
+      - ..:/app
+    command: ["npx", "wdio", "run", "wdio.conf.js"]
+
+networks:
+  docker_default:
+    external: true  # Use the same network as Selenium Grid

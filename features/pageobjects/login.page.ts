@@ -4,10 +4,11 @@ import utils from "../../utils/utils";
 import allure from "@wdio/allure-reporter";
 import chalk from "chalk";
 import type { ChainablePromiseElement } from "webdriverio";
+import { expect } from "expect-webdriverio";
 
 class LoginPage extends Page {
   /**
-   * Define selectors using getter methods
+   * element
    */
   get inputUsername(): ChainablePromiseElement {
     return $("//input[@name='email' and @type='email']");

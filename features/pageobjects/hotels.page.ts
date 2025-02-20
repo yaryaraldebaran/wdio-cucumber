@@ -11,6 +11,9 @@ import type { ChainablePromiseElement, Element } from 'webdriverio';
 import HandleElement from "../../utils/handleElement";
 import 'expect-webdriverio';
 import assert from "assert";
+import GeneralPage from "./general.page";
+
+const generalPage = new GeneralPage()
 
 
 export default class HotelsPage extends Page{
@@ -43,7 +46,7 @@ export default class HotelsPage extends Page{
     }
 
     async btnViewByHotelName(text: string) {
-        return $(`//strong[text()='${text}']/ancestor::div[@class='card rounded-2']/descendant::a[normalize-space(text())='View More']`);
+        return $(`//strong[text()='${text}']/ancestor::div[@class='mb-2']/descendant::a[normalize-space(text())='View More']`);
     }
 
     get txtHotelNameinDetail()  {
@@ -144,18 +147,25 @@ export default class HotelsPage extends Page{
         await HandleElement.scrollToElement(btnView);
         await btnView.click();
 
+        await this.txtHotelNameinDetail.waitForDisplayed({timeout:15000})
         const hotelNameInDetail = await this.txtHotelNameinDetail.getText();
         await expect(hotelNameInDetail).toEqual(hotelName);
-        
         await utils.takeScreenshot(null,"Hotel name in detail is equal");
+        const txtHotelLocationInDetail = (await generalPage.spanByClassEqualsDynamics('text--overflow')).getText()
+        const txtCityNameGlobal = GlobalVariables.getVariable("cityName")
+        if (txtCityNameGlobal!==undefined){
+            assert ((await txtHotelLocationInDetail).includes(String(txtCityNameGlobal)))
+        }
+        
     }
 
     async verifyCityInSearchLocation(cityName: string){
-        const cityNameOnCard = await this.txtHotelLocation(cityName);
-        for (const element of cityNameOnCard) {
-            await expect(await element.isDisplayed()).toBe(true);
-        }
-        await utils.takeScreenshot();
+        // const cityNameOnCard = await this.txtHotelLocation(cityName);
+        // for (const element of cityNameOnCard) {
+        //     await expect(await element.isDisplayed()).toBe(true);
+        // }
+        // await utils.takeScreenshot();
+        GlobalVariables.setVariable("cityName",cityName)
     }
 
     async selectDropdown(dropdown:ChainablePromiseElement, option:ChainablePromiseElement){

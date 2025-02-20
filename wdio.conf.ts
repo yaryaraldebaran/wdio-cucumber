@@ -1,12 +1,17 @@
 import { addAttachment } from '@wdio/allure-reporter';
 import utils from './utils/utils';
 import Page from './features/pageobjects/page';
+import {browser} from '@wdio/globals'
 import type { Options } from '@wdio/types';
-import type { Pickle, HookFunctionExtension } from '@wdio/cucumber-framework';
+import {$,expect} from '@wdio/globals'
+import type { Pickle, HookFunctionExtension,StepResult } from '@wdio/cucumber-framework';
+import { PickleStep,Results,TestResult } from '@wdio/types/build/Frameworks';
 
 const page = new Page();
 
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config = {
+  hostname:'selenium-hub',
+  port:4444,
   runner: "local",
   specs: ["./features/**/*.feature"],
   exclude: [],
@@ -14,20 +19,26 @@ export const config: Options.Testrunner = {
   maxInstances: 1,
 
   capabilities: [
-    {
-      browserName: "firefox",
-      'moz:firefoxOptions': {
-        prefs: {
-          'network.cookie.lifetimePolicy': 2,
-          'browser.cache.disk.enable': false,
-          'browser.cache.memory.enable': false,
-          'privacy.clearOnShutdown.cookies': true,
-          'privacy.clearOnShutdown.cache': true,
-          'privacy.clearOnShutdown.history': true
-        },
-        args: ['--no-remote']
-      }
-    }
+    { 
+        browserName: 'chrome',
+        acceptInsecureCerts:true,
+        'goog:chromeOptions':{
+            args:['--disable-gpu','--disable-dev-shm-usage']
+        }
+    }, 
+    // {
+    //   browserName: "chrome",
+    //   'goog:chromeOptions': {
+    //     args: [
+    //       '--no-sandbox',
+    //       '--disable-infobars',
+    //       '--headless',
+    //       '--disable-gpu',
+    //       '--window-size=1440,735'
+    //     ]
+    //   }
+    // }
+
   ],
 
   logLevel: "warn",
@@ -35,7 +46,7 @@ export const config: Options.Testrunner = {
   waitforTimeout: 10000,
   connectionRetryTimeout: 120000,
   connectionRetryCount: 3,
-  services: ["visual"],
+  services: ["docker"],
 
   framework: "cucumber",
 
@@ -75,11 +86,10 @@ export const config: Options.Testrunner = {
     console.log('========= BEFORE SCENARIO END =========');
   },
 
-  beforeStep: function (step) {
+  beforeStep: function (step: PickleStep, scenario: Pickle, context: Object): void {
     console.log(`Start Step: ${step.keyword} ${step.text}`);
   },
-
-  afterStep: function (step, scenario, result) {
+  afterStep: function (step: PickleStep, scenario: Pickle, result:StepResult) {
     console.log(`After Step: ${step.keyword} ${step.text}`);
   },
 
@@ -94,7 +104,7 @@ export const config: Options.Testrunner = {
     }
 
     await page.open('logout');
-    
+
     const logoutSuccess = await $("//h4[text()='Logout Successful']");
     await logoutSuccess.waitForDisplayed({ timeout: 5000 });
 
