@@ -21,6 +21,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
+                    if (!params.BRANCH?.trim()) {
+                        error("Parameter BRANCH tidak boleh kosong!")
+                        }
+
                     deleteDir()
                     echo "Checking out branch: ${params.BRANCH}"
                     git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
@@ -29,13 +33,6 @@ pipeline {
                 }
             }
         }
-        // stage('Install Dependencies Locally') {
-        //     steps {
-        //         script {
-        //             bat 'npm install'
-        //         }
-        //     }
-        // }
         stage('Run Tests') {
             steps {
                 script {
