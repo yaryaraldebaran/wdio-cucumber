@@ -21,6 +21,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
+                    deleteDir()
                     if (!params.BRANCH?.trim()) {
                         error("Parameter BRANCH tidak boleh kosong!")
                         }
