@@ -1,6 +1,6 @@
 import { addAttachment } from '@wdio/allure-reporter';
-import utils from './utils/utils';
-import Page from './features/pageobjects/page';
+import utils from '../utils/utils';
+import Page from '../features/pageobjects/page';
 import {browser} from '@wdio/globals'
 import type { Options } from '@wdio/types';
 import {$,expect} from '@wdio/globals'
@@ -14,7 +14,7 @@ export const config: WebdriverIO.Config = {
   hostname:'selenium-hub',
   port:4444,
   runner: "local",
-  specs: ["./features/**/*.feature"],
+  specs: ["../features/**/*.feature"],
   exclude: [],
 
   maxInstances: 1,

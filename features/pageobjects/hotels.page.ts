@@ -1,26 +1,15 @@
-import {$$} from "@wdio/globals"
-import {$} from "@wdio/globals"
-import {browser} from "@wdio/globals"
+import {$$,$,browser} from "@wdio/globals"
 import Page from "./page";
 import GlobalVariables from '../../utils/globalVariables';
-
-
 import utils from "../../utils/utils";
 import report from "@wdio/allure-reporter";
-import type { ChainablePromiseElement, Element } from 'webdriverio';
+import type { ChainablePromiseElement } from 'webdriverio';
 import HandleElement from "../../utils/handleElement";
-import 'expect-webdriverio';
 import assert from "assert";
-import GeneralPage from "./general.page";
-
-const generalPage = new GeneralPage()
 
 
 export default class HotelsPage extends Page{
 
-    constructor() {
-        super();  // Ensure base class constructor is called
-    }
     get searchSelector() {
         return $("(//span[contains(@class,'select2')])[1]");
     }
@@ -151,7 +140,7 @@ export default class HotelsPage extends Page{
         const hotelNameInDetail = await this.txtHotelNameinDetail.getText();
         await expect(hotelNameInDetail).toEqual(hotelName);
         await utils.takeScreenshot(null,"Hotel name in detail is equal");
-        const txtHotelLocationInDetail = (await generalPage.spanByClassEqualsDynamics('text--overflow')).getText()
+        const txtHotelLocationInDetail = (await this.spanByClassEqualsDynamics('text--overflow')).getText()
         const txtCityNameGlobal = GlobalVariables.getVariable("cityName")
         if (txtCityNameGlobal!==undefined){
             assert ((await txtHotelLocationInDetail).includes(String(txtCityNameGlobal)))

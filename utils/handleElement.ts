@@ -1,7 +1,7 @@
-import type { ChainablePromiseElement, Element } from 'webdriverio';
+import type { ChainablePromiseElement } from 'webdriverio';
 import {browser} from '@wdio/globals'
 
-class HandleElement {
+export default class HandleElement {
     /**
      * Checks if the element exists and is displayed
      * @param element - The element to check
@@ -85,5 +85,3 @@ class HandleElement {
         }
     }
 }
-
-export default HandleElement;

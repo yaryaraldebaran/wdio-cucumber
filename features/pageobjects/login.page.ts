@@ -6,7 +6,7 @@ import chalk from "chalk";
 import type { ChainablePromiseElement } from "webdriverio";
 import { expect } from "expect-webdriverio";
 
-class LoginPage extends Page {
+export default class LoginPage extends Page {
   /**
    * element
    */
@@ -30,7 +30,7 @@ class LoginPage extends Page {
     return $(`//button[./span[text()='${text}']]`);
   }
 
-  async login(username: string, password: string): Promise<void> {
+  public async login(username: string, password: string): Promise<void> {
     await browser.url("https://phptravels.net/login");
 
     await this.inputUsername.waitForDisplayed({ timeout: 10000 });
@@ -42,7 +42,7 @@ class LoginPage extends Page {
     await this.btnSubmit.click();
   }
 
-  async selectMenu(menuName: string): Promise<void> {
+  public async selectMenu(menuName: string): Promise<void> {
     allure.addStep(`Select menu ${menuName}`);
 
     await this.btnLogo.waitForClickable({ timeout: 15000 });
@@ -61,5 +61,3 @@ class LoginPage extends Page {
     return super.open(path);
   }
 }
-
-export default new LoginPage();

@@ -8,4 +8,4 @@ COPY package*.json ./
 
 COPY . .
 # Run WebdriverIO tests
-CMD ["npx", "wdio", "wdio.conf.ts"]
+CMD ["npx", "wdio", "config/wdio.conf.ts"]

@@ -4,12 +4,12 @@ import LoginPage from '../pageobjects/login.page';
 
 // Define a type for the pages object to ensure type safety
 type Pages = {
-    login: typeof LoginPage;
+    login: LoginPage;
 };
 
 // Define the pages object with type annotation
 const pages: Pages = {
-    login: LoginPage
+    login: new LoginPage()
 };
 
 Given(/^User is on the "(.*)" page$/, async (page: keyof Pages) => {
@@ -17,16 +17,16 @@ Given(/^User is on the "(.*)" page$/, async (page: keyof Pages) => {
 });
 
 When(/^User login with (.+) and (.+)$/, async (username: string, password: string) => {
-    await LoginPage.login(username, password);
+    await pages.login.login(username, password);
 });
 
 Then(/^User open the "(.*)" menu$/, async (menuName: string) => {
-    await LoginPage.selectMenu(menuName);
+    await pages.login.selectMenu(menuName);
 });
 
 Given(/^User logged in as (.+) with password (.+)$/, async (username: string, password: string) => {
     await pages['login'].open();
-    await LoginPage.login(username, password);
+    await pages.login.login(username, password);
 });
 
 Given(/^User is on the dashboard page$/, async () => {

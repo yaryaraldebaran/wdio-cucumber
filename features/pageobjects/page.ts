@@ -1,5 +1,4 @@
-import { browser } from '@wdio/globals'
-
+import { browser,$ } from '@wdio/globals'
 /**
 * main page object containing all methods, selectors and functionality
 * that is shared across all page objects
@@ -12,5 +11,13 @@ export default class Page {
     public async open(path: string): Promise<void> {
         await browser.url(`https://phptravels.net/${path}`);
         await browser.maximizeWindow()
+    }
+
+    async spanByTextEqualsDynamics(text: string) {
+        return $(`//span[text()='${text}']`);
+    }
+
+    async spanByClassEqualsDynamics(text: string) {
+        return $(`//span[@class='${text}']`);
     }
 }
