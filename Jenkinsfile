@@ -14,25 +14,23 @@ pipeline {
         )
     }
     environment {
-        GIT_CREDENTIALS = credentials('56886b6a-2044-4bea-8434-b13331da1fd9')
-        DOCKER_IMAGE = 'wdio-cucumber_master:latest'
+        GIT_CREDENTIALS = 'github-yar'
+        DOCKER_IMAGE = 'docker-wdio'
     }
     stages {
         stage('Checkout') {
             steps {
                 script {
                     deleteDir()
+                    if (!params.BRANCH?.trim()) {
+                        error("Parameter BRANCH tidak boleh kosong!")
+                        }
+
+                    deleteDir()
                     echo "Checking out branch: ${params.BRANCH}"
                     git url: 'https://github.com/yaryaraldebaran/wdio-cucumber', 
                         credentialsId: env.GIT_CREDENTIALS, 
                         branch: params.BRANCH
-                }
-            }
-        }
-        stage('Install Dependencies Locally') {
-            steps {
-                script {
-                    bat 'npm install'
                 }
             }
         }
@@ -50,9 +48,9 @@ pipeline {
                     def featureDescription = FEATURE_DESCRIPTION_MAP[cucumberTag]
 
                     echo "Running tests for: ${featureDescription} with tag: ${cucumberTag}"
-                    bat """
-                        docker-compose -f docker-compose.yml run \
-                        -e FEATURE_TAG=${cucumberTag} wdio
+                    sh"""
+                    CUCUMBER_TAGS=${cucumberTag} docker compose \
+                    -f ./docker/docker-compose-wdio.yml up
                     """
                 } 
             } 
@@ -62,22 +60,22 @@ pipeline {
         always {
             script {
                 echo 'Cleaning up Docker Compose resources...'
-                bat 'docker-compose -f docker-compose.yml down'
+                sh 'docker-compose -f ./docker/docker-compose-wdio.yml down'
             }
         }
-        success {
-            script {
-                echo 'Generating and publishing Allure report...'
-                // Generate Allure report
-                bat 'allure generate ./allure-results --clean -o ./allure-report'
+        // success {
+        //     script {
+        //         echo 'Generating and publishing Allure report...'
+        //         // Generate Allure report
+        //         bat 'allure generate ./allure-results --clean -o ./allure-report'
                 
-                // Publish Allure report
-                allure([
-                    reportBuildPolicy: 'ALWAYS',
-                    reportFiles: '**/allure-report/**/*',
-                    allowEmptyResults: true
-                ])
-            }
-        }
+        //         // Publish Allure report
+        //         allure([
+        //             reportBuildPolicy: 'ALWAYS',
+        //             reportFiles: '**/allure-report/**/*',
+        //             allowEmptyResults: true
+        //         ])
+        //     }
+        // }
     }
 }

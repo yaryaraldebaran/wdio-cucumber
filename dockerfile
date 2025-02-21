@@ -13,7 +13,12 @@ RUN apt-get update && apt-get install -y \
     firefox-esr \
     xvfb \
     x11-utils \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*\
+    && wget https://github.com/allure-framework/allure2/releases/download/2.20.1/allure-2.20.1.zip \
+    && unzip allure-2.20.1.zip -d /opt \
+    && rm allure-2.20.1.zip \
+    && ln -s /opt/allure-2.20.1/bin/allure /usr/local/bin/allure
+
 
 # Set the npm cache directory and set a writable home directory for the 'app' user
 RUN mkdir -p /app/.npm-cache
