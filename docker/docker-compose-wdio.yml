@@ -12,6 +12,8 @@ services:
     volumes:
       - ..:/app
     working_dir: /app
+    # proses instalasi ada di command shell karena tidak bisa di dockerfile. 
+    # jika di dockerfile, akan dianggap tidak punya config.ts
     command: ["sh", "-c", "npm install && npx wdio /app/wdio.conf.ts"]
 
 networks:
