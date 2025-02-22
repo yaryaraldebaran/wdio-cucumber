@@ -7,9 +7,9 @@ export default class HandleElement {
      * @param element - The element to check
      * @returns True if the element exists and is displayed, false otherwise
      */
-    static async isElementVisible(element: ChainablePromiseElement): Promise<boolean> {
+    static async isElementVisible(element: ChainablePromiseElement, delayTimeout:number=10000): Promise<boolean> {
         try {
-            await element.waitForDisplayed({ timeout: 5000 });
+            await element.waitForDisplayed({ timeout: delayTimeout });
             return true;
         } catch (error) {
             console.warn("Element is not visible:", (error as Error).message);
@@ -22,6 +22,7 @@ export default class HandleElement {
      * @param element - The element to click
      */
     static async clickElement(element: ChainablePromiseElement): Promise<void> {
+        const strSelector = element.selector
         if (await this.isElementVisible(element)) {
             try {
                 await element.click();
@@ -30,7 +31,22 @@ export default class HandleElement {
                 console.error("Failed to click the element:", (error as Error).message);
             }
         } else {
-            console.error("Cannot click: Element is not visible.");
+            console.error(`Cannot click: Element with selector ${strSelector} is not visible.`);
+        }
+    }
+
+    static async scrollAndClick(element:ChainablePromiseElement, delayTimeout:number){
+        const strSelector = element.selector
+        if (await this.isElementVisible(element)) {
+            try {
+                await element.scrollIntoView()
+                await element.click()
+                
+            } catch (error) {
+                console.error(`Failed to scroll and click the element with selector: ${strSelector}`)
+            }
+        }else{
+            console.error(`Cannot click: element with selector ${strSelector} is visible`)
         }
     }
 
@@ -84,4 +100,9 @@ export default class HandleElement {
             console.error("Cannot input text: Element is not visible.");
         }
     }
+
+    /**
+     * Input text using javascript
+     * 
+     */
 }

@@ -62,15 +62,15 @@ export default class HotelsPage extends Page{
         return $(`//div[./h5/strong[text()='${text}']]/descendant::button[./strong][1]`);
     }
 
-    async inputPersonalInfoByLabelDynamic(text: string) {
+    inputPersonalInfoByLabelDynamic(text: string) {
         return $(`//input[following-sibling::label[normalize-space(text())='${text}'] and ancestor::div/div/h3[normalize-space(text())='Personal Information']]`);
     }
 
-    async inputTravellerFirstNamebyOrder(index: number) {
+    inputTravellerFirstNamebyOrder(index: number) {
         return $(`//div[./div/h3[normalize-space(text())='Travellers Information']]/descendant::input[@placeholder='First Name'][${index}]`);
     }
 
-    async inputTravellerLastNamebyOrder(index: number) {
+    inputTravellerLastNamebyOrder(index: number) {
         return $(`//div[./div/h3[normalize-space(text())='Travellers Information']]/descendant::input[@placeholder='Last Name'][${index}]`);
     }
 
@@ -112,12 +112,11 @@ export default class HotelsPage extends Page{
         console.log("Now searching hotel");
 
         await browser.pause(4000);
-        await this.searchSelector.waitForDisplayed({ timeout: 20000 });
-        await this.searchSelector.click();
-        await this.searchField.setValue(cityName);
+        await HandleElement.clickElement(this.searchSelector)
+        await HandleElement.inputText(this.searchField,cityName)
         await utils.takeScreenshot(null,"Searching hotel with city filter");
         await browser.pause(2000);
-        await this.firstResult.click();
+        await HandleElement.clickElement(this.firstResult)
         await report.addStep("Click first result city");
         await this.buttonSearch.waitForDisplayed({ timeout: 5000 });
         await this.buttonSearch.click();
@@ -127,16 +126,13 @@ export default class HotelsPage extends Page{
 
     async selectHotel(hotelName: string){
         const btnHide = await $("//button[text()='Hide']");
-        if (await btnHide.isExisting() && await btnHide.isDisplayed()) {
-            await btnHide.click();
-        }
+        await HandleElement.scrollAndClick(btnHide,5000)
+        // if (await btnHide.isExisting() && await btnHide.isDisplayed()) {
+        //     await btnHide.click();
+        // }
 
-        const btnView = await this.btnViewByHotelName(hotelName);
-        await btnView.waitForDisplayed({ timeout: 5000, timeoutMsg: "Element not displayed" });
-        await HandleElement.scrollToElement(btnView);
-        await btnView.click();
-
-        await this.txtHotelNameinDetail.waitForDisplayed({timeout:15000})
+        await HandleElement.scrollAndClick(await this.btnViewByHotelName(hotelName),10000)
+        await HandleElement.isElementVisible(this.txtHotelNameinDetail,100000)
         const hotelNameInDetail = await this.txtHotelNameinDetail.getText();
         await expect(hotelNameInDetail).toEqual(hotelName);
         await utils.takeScreenshot(null,"Hotel name in detail is equal");
@@ -149,11 +145,6 @@ export default class HotelsPage extends Page{
     }
 
     async verifyCityInSearchLocation(cityName: string){
-        // const cityNameOnCard = await this.txtHotelLocation(cityName);
-        // for (const element of cityNameOnCard) {
-        //     await expect(await element.isDisplayed()).toBe(true);
-        // }
-        // await utils.takeScreenshot();
         GlobalVariables.setVariable("cityName",cityName)
     }
 
@@ -167,11 +158,11 @@ export default class HotelsPage extends Page{
     }
 
     async fillPersonalInformation(){
-        await (await this.inputPersonalInfoByLabelDynamic("First Name")).setValue("John");
-        await (await this.inputPersonalInfoByLabelDynamic("Last Name")).setValue("Doe");
-        await (await this.inputPersonalInfoByLabelDynamic("Email")).setValue("john@doe.com");
-        await (await this.inputPersonalInfoByLabelDynamic("Address")).setValue("John Doe Address");
-        await (await this.inputPersonalInfoByLabelDynamic("Phone")).setValue("088888888");
+        await HandleElement.inputText(this.inputPersonalInfoByLabelDynamic("First Name"),"John")
+        await HandleElement.inputText(this.inputPersonalInfoByLabelDynamic("Last Name"),"Doe")
+        await HandleElement.inputText(this.inputPersonalInfoByLabelDynamic("Email"),"john@doe.com")
+        await HandleElement.inputText(this.inputPersonalInfoByLabelDynamic("Address"),"John Doe Address")
+        await HandleElement.inputText(this.inputPersonalInfoByLabelDynamic("Phone"),"088888888")
         await utils.takeScreenshot();
     }
 
@@ -183,8 +174,10 @@ export default class HotelsPage extends Page{
                 await this.dropdownTravellerTitlebyOrder(i + 1),
                 await this.optionByTextOnDetail("Mr")
             );
-            await (await this.inputTravellerFirstNamebyOrder(i + 1)).setValue("John");
-            await (await this.inputTravellerLastNamebyOrder(i + 1)).setValue("Doe");
+            await HandleElement.inputText(this.inputTravellerFirstNamebyOrder(i+1),"John")
+            await HandleElement.inputText(this.inputTravellerLastNamebyOrder(i+1),"Doe")
+            // await (await this.inputTravellerFirstNamebyOrder(i + 1)).setValue("John");
+            // await (await this.inputTravellerLastNamebyOrder(i + 1)).setValue("Doe");
         }
 
         await report.addStep("Input traveller is finished");

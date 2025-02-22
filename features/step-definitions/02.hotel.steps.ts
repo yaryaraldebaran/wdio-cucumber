@@ -7,8 +7,14 @@ import Page from "../pageobjects/page";
 import GlobalVariables from "../../utils/globalVariables";
 import HandleElement from "../../utils/handleElement";
 
-const pages: Record<string, Page> = {
-  login: LoginPage,
+
+type Pages = {
+  login: LoginPage;
+};
+
+// Define the pages object with type annotation
+const pages: Pages = {
+  login: new LoginPage()
 };
 const page = new Page()
 const hotelsPage = new HotelsPage()
@@ -28,8 +34,8 @@ Then(/^User see \"(.*)\" city in result card$/, async (cityName: string) => {
 });
 
 Given(/^User have searched for hotels in \"(.*)\"$/, async (cityName: string) => {
-  await LoginPage.login("user@phptravels.com", "demouser");
-  await LoginPage.selectMenu("Hotels");
+  await pages.login.login("user@phptravels.com", "demouser");
+  await pages.login.selectMenu("Hotels");
   await browser.pause(5000);
   await hotelsPage.searchHotel(cityName);
   await hotelsPage.verifyCityInSearchLocation(cityName);
